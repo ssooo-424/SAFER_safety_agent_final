@@ -1,0 +1,20 @@
+{
+  "name": "safety-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node server.js",
+    "test": "node --test",
+    "test:scenario-validation": "node tests/testScenarioValidationWorkflow.js",
+    "export:google-sheets": "node scripts/exportGoogleSheets.js"
+  },
+  "dependencies": {
+    "dotenv": "^17.2.3",
+    "express": "^4.19.2",
+    "googleapis": "^176.0.0",
+    "openai": "^6.17.0",
+    "pg": "^8.23.0"
+  }
+}

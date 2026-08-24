@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SAFER 시나리오 독립 검토</title>
+  <link rel="stylesheet" href="scenario-review.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">SAFER RESEARCH VALIDATION</p>
+        <h1>위험 시나리오 독립 검토</h1>
+        <p class="subtitle">모델 이름과 순위를 보지 않고 후보의 적합성을 평가합니다.</p>
+      </div>
+      <div class="progress-card">
+        <span>검토 진행률</span>
+        <strong id="progressText">0 / 0</strong>
+        <div class="progress-track"><i id="progressBar"></i></div>
+      </div>
+    </header>
+
+    <section class="panel reviewer-panel">
+      <label>
+        평가자 ID
+        <input id="reviewerId" type="text" placeholder="예: R1" autocomplete="off">
+      </label>
+      <label>
+        전문성/역할
+        <input id="reviewerExpertise" type="text" placeholder="예: 건설안전 연구자 5년">
+      </label>
+      <div class="file-actions">
+        <label class="button secondary">
+          검토 번들 불러오기
+          <input id="bundleFile" type="file" accept="application/json" hidden>
+        </label>
+        <label class="button secondary">
+          기존 검토 불러오기
+          <input id="reviewFile" type="file" accept="application/json" hidden>
+        </label>
+        <button id="exportButton" class="button primary" type="button">검토 JSON 내보내기</button>
+      </div>
+    </section>
+
+    <section id="emptyState" class="panel empty-state">
+      <h2>검토 데이터를 준비하고 있습니다.</h2>
+      <p>기본 번들을 찾지 못하면 ‘검토 번들 불러오기’에서 human_review_bundle.json을 선택하세요.</p>
+    </section>
+
+    <section id="reviewArea" class="review-layout" hidden>
+      <aside class="panel case-nav">
+        <h2>검토 사례</h2>
+        <div id="caseButtons" class="case-buttons"></div>
+      </aside>
+
+      <div class="review-content">
+        <section class="panel case-summary">
+          <div class="case-heading">
+            <div>
+              <p id="caseTag" class="eyebrow"></p>
+              <h2 id="caseId"></h2>
+            </div>
+            <div class="case-nav-buttons">
+              <button id="prevCase" class="icon-button" type="button">이전</button>
+              <button id="nextCase" class="icon-button" type="button">다음</button>
+            </div>
+          </div>
+          <dl id="caseFacts" class="facts-grid"></dl>
+        </section>
+
+        <section class="panel classification-panel">
+          <h2>1. 작업상황 분류</h2>
+          <div class="classification-grid">
+            <label>
+              가장 적합한 세부공정
+              <select id="expectedDetail"></select>
+            </label>
+            <label>
+              대표 사고유형
+              <select id="expectedRisk"></select>
+            </label>
+          </div>
+        </section>
+
+        <section class="panel candidate-panel">
+          <div class="section-heading">
+            <div>
+              <h2>2. 후보 시나리오 평가</h2>
+              <p>1=무관, 2=약함, 3=가능, 4=적합, 5=매우 적합</p>
+            </div>
+            <label class="inline-check">
+              <input id="noSuitable" type="checkbox">
+              적합한 후보 없음
+            </label>
+          </div>
+          <div id="candidateCards" class="candidate-list"></div>
+        </section>
+
+        <section class="panel note-panel">
+          <label>
+            사례 검토 메모
+            <textarea id="reviewerNote" rows="3" placeholder="판단이 어려웠던 이유나 합의 검토가 필요한 부분을 적어주세요."></textarea>
+          </label>
+        </section>
+      </div>
+    </section>
+  </main>
+
+  <script src="scenario-review/review-store.js"></script>
+  <script src="scenario-review/review-renderer.js"></script>
+  <script src="scenario-review/review-files.js"></script>
+  <script src="scenario-review/review-navigation.js"></script>
+  <script src="scenario-review.js"></script>
+</body>
+</html>

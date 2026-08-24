@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SAFER 시나리오 합의 판정</title>
+  <link rel="stylesheet" href="scenario-review.css">
+</head>
+<body>
+  <main class="page-shell">
+    <header class="topbar">
+      <div>
+        <p class="eyebrow">SAFER RESEARCH ADJUDICATION</p>
+        <h1>평가 불일치 합의 판정</h1>
+        <p class="subtitle">두 평가 결과를 확인하고 연구용 최종 정답을 확정합니다.</p>
+      </div>
+      <div class="progress-card">
+        <span>합의 진행률</span>
+        <strong id="progressText">0 / 0</strong>
+        <div class="progress-track"><i id="progressBar"></i></div>
+      </div>
+    </header>
+
+    <section class="panel reviewer-panel">
+      <label class="button secondary">
+        검토 번들 불러오기
+        <input id="bundleFile" type="file" accept="application/json" hidden>
+      </label>
+      <label class="button secondary">
+        합의 템플릿 불러오기
+        <input id="adjudicationFile" type="file" accept="application/json" hidden>
+      </label>
+      <button id="exportButton" class="button primary" type="button">합의 정답 JSON 내보내기</button>
+    </section>
+
+    <section id="emptyState" class="panel empty-state">
+      <h2>두 파일을 불러오세요.</h2>
+      <p>human_review_bundle.json과 adjudication_template.json이 필요합니다.</p>
+    </section>
+
+    <section id="reviewArea" class="review-layout" hidden>
+      <aside class="panel case-nav">
+        <h2>합의 사례</h2>
+        <div id="caseButtons" class="case-buttons"></div>
+      </aside>
+      <div class="review-content">
+        <section class="panel case-summary">
+          <div class="case-heading">
+            <div><p id="caseTag" class="eyebrow"></p><h2 id="caseId"></h2></div>
+            <div class="case-nav-buttons">
+              <button id="prevCase" class="icon-button" type="button">이전</button>
+              <button id="nextCase" class="icon-button" type="button">다음</button>
+            </div>
+          </div>
+          <dl id="caseFacts" class="facts-grid"></dl>
+        </section>
+
+        <section class="panel classification-panel">
+          <h2>평가자 판단 비교</h2>
+          <div id="reviewerComparison" class="facts-grid"></div>
+        </section>
+
+        <section class="panel classification-panel">
+          <h2>1. 최종 분류</h2>
+          <div class="classification-grid">
+            <label>최종 세부공정<select id="finalDetail"></select></label>
+            <label>최종 대표 사고유형<select id="finalRisk"></select></label>
+          </div>
+        </section>
+
+        <section class="panel candidate-panel">
+          <div class="section-heading">
+            <div><h2>2. 최종 후보 판정</h2><p>각 후보의 최종 적합도와 수용 여부를 합의합니다.</p></div>
+            <label class="inline-check"><input id="finalNoSuitable" type="checkbox"> 적합한 후보 없음</label>
+          </div>
+          <div id="candidateCards" class="candidate-list"></div>
+        </section>
+
+        <section class="panel note-panel">
+          <label>합의 판정 메모<textarea id="adjudicationNote" rows="3"></textarea></label>
+        </section>
+      </div>
+    </section>
+  </main>
+  <script src="scenario-adjudication/state.js"></script>
+  <script src="scenario-adjudication/dom.js"></script>
+  <script src="scenario-adjudication/rendering.js"></script>
+  <script src="scenario-adjudication/file-loading.js"></script>
+  <script src="scenario-adjudication/navigation-export.js"></script>
+  <script src="scenario-adjudication.js"></script>
+</body>
+</html>

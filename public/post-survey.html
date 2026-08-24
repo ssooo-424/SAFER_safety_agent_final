@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>경험 사후 설문 (POST)</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/post-survey.css" />
+</head>
+<body>
+  <div class="mobile-frame">
+    <header>
+      <h1>경험 사후 설문</h1>
+      <p class="header-description">본 연구를 위해 모든 문항에 솔직하게 응답해 주세요.</p>
+    </header>
+
+    <div class="content">
+      <div class="section-title">1. 콘텐츠 경험 품질 (5점)</div>
+      <div id="q-p1-1" class="question-card"></div>
+      <div id="q-p1-2" class="question-card"></div>
+      <div id="q-p1-3" class="question-card"></div>
+      <div id="q-p2-1" class="question-card"></div>
+      <div id="q-p2-2" class="question-card"></div>
+      <div id="q-p2-3" class="question-card"></div>
+      <div id="q-p2-4" class="question-card"></div>
+
+      <div class="section-title">2. 사고 위험지각 (100점)</div>
+      <div class="question-card">
+        <div class="question-text">R1. 건설현장에서 발생하는 사고의 피해는 대체로 매우 심각하다고 생각하십니까?</div>
+        <div class="slider-group">
+          <div class="slider-container"><span class="slider-bubble" id="R1_bub">50</span><input type="range" id="R1" min="0" max="100" value="50" step="10"></div>
+          <div class="slider-labels"><span>전혀 0</span><span>매우 강하게 100</span></div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="question-text">R2. 나 또한 건설현장에서 사고를 겪을 가능성이 실제로 있다고 생각하십니까?</div>
+        <div class="slider-group">
+          <div class="slider-container"><span class="slider-bubble" id="R2_bub">50</span><input type="range" id="R2" min="0" max="100" value="50" step="10"></div>
+          <div class="slider-labels"><span>전혀 0</span><span>매우 강하게 100</span></div>
+        </div>
+      </div>
+      <div class="question-card">
+        <div class="question-text">R3. 본인이 수행하는 건설 업무 자체가 위험성이 크다고 느끼십니까?</div>
+        <div class="slider-group">
+          <div class="slider-container"><span class="slider-bubble" id="R3_bub">50</span><input type="range" id="R3" min="0" max="100" value="50" step="10"></div>
+          <div class="slider-labels"><span>전혀 0</span><span>매우 강하게 100</span></div>
+        </div>
+      </div>
+
+      <div class="section-title">3. 사고 대응 의도 (5점)</div>
+      <div id="q-c1" class="question-card"></div>
+      <div id="q-i1" class="question-card"></div>
+
+      <div class="section-title">4. 감정 반응</div>
+      <div class="question-card">
+        <div class="subsection-description">D1. 감정의 정도와 방향을 알려주세요.</div>
+
+        <div class="emotion-block">
+          <div class="emotion-label">두려움</div>
+          <div id="q-D1-fear-a"></div>
+          <div class="question-text emotion-direction-question">D1-b. 그 두려움은 어떻게 작용했나요?</div>
+          <div class="slider-container"><span class="slider-bubble" id="D1_fear_b_bub">50</span><input type="range" id="D1_fear_b" min="0" max="100" value="50" step="10"></div>
+          <div class="slider-labels"><span>앞으로의 행동을 조심하게 했다.</span><span>콘텐츠 자체를 피하고 싶었다.</span></div>
+        </div>
+
+        <div class="emotion-block">
+          <div class="emotion-label">긴장감</div>
+          <div id="q-D1-tension-a"></div>
+          <div class="question-text emotion-direction-question">D1-b. 그 긴장감은 어떻게 작용했나요?</div>
+          <div class="slider-container"><span class="slider-bubble" id="D1_tension_b_bub">50</span><input type="range" id="D1_tension_b" min="0" max="100" value="50" step="10"></div>
+          <div class="slider-labels"><span>앞으로의 작업에 집중하게 할것이다.</span><span>콘텐츠를 보는 것이 심리적으로 부담이 되었다.</span></div>
+        </div>
+
+        <div class="emotion-block">
+          <div class="emotion-label">불편감</div>
+          <div id="q-D1-discomfort-a"></div>
+          <div class="question-text emotion-direction-question">D1-b. 그 불편감은 어떻게 작용했나요?</div>
+          <div class="slider-container"><span class="slider-bubble" id="D1_discomfort_b_bub">50</span><input type="range" id="D1_discomfort_b" min="0" max="100" value="50" step="10"></div>
+          <div class="slider-labels"><span>사고를 현실적으로 체감하게 했다.</span><span>콘텐츠 내용에 거부감이 들었다.</span></div>
+        </div>
+      </div>
+
+      <div class="question-card">
+        <div class="subsection-description">D2. 감정 잔상</div>
+        <div id="q-D2"></div>
+      </div>
+
+      <div class="section-title">5. 심층 인터뷰</div>
+      <div class="question-card"><div class="question-text">Q1. 방금 본 콘텐츠에서 가장 기억에 남는 장면이나 문장은 무엇인가요?</div><textarea id="int_1" placeholder="자유롭게 작성해 주세요..."></textarea></div>
+      <div class="question-card"><div class="question-text">Q2. 그 장면을 볼 때 구체적으로 어떤 감정이 들었나요?</div><textarea id="int_2" placeholder="자유롭게 작성해 주세요..."></textarea></div>
+      <div class="question-card"><div class="question-text">Q3. 콘텐츠의 어떤 요소가 경각심을 만드는 데 가장 큰 역할을 했나요?</div><textarea id="int_3" placeholder="자유롭게 작성해 주세요..."></textarea></div>
+      <div class="question-card"><div class="question-text">Q4. 사고로 인한 손실(신체적, 경제적 등)이 이전과 비교해 어떻게 다르게 느껴졌는지, 구체적으로 어떤 부분에서 그렇게 느꼈는지 말씀해 주세요.</div><textarea id="int_4" placeholder="자유롭게 작성해 주세요..."></textarea></div>
+      <div class="question-card"><div class="question-text">Q5. 앞으로 실제 작업 중에 오늘 경험한 내용이 떠오른다면, 어떤 순간에 어떤 형태로 떠오를 것 같은지 자유롭게 설명해 주세요.</div><textarea id="int_5" placeholder="자유롭게 작성해 주세요..."></textarea></div>
+      <div class="question-card"><div class="question-text">Q6. 오늘 경험 이후 안전수칙 준수에 대한 본인의 태도나 의지가 어떻게 달라졌는지, 달라진 점이 있다면 구체적으로 어떤 부분인지 말씀해 주세요.</div><textarea id="int_6" placeholder="자유롭게 작성해 주세요..."></textarea></div>
+    </div>
+
+    <footer>
+      <div class="warn-banner" id="warnBanner" hidden></div>
+      <button type="button" class="submit-btn" id="save-btn">설문 제출 및 종료</button>
+    </footer>
+  </div>
+
+  <script src="/api-client.js"></script>
+  <script src="/post-survey.js"></script>
+</body>
+</html>

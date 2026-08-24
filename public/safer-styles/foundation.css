@@ -1,0 +1,142 @@
+:root {
+  --blue: #2563eb;
+  --blue-dark: #1d4ed8;
+  --blue-soft: #dbeafe;
+  --ink: #172033;
+  --muted: #667085;
+  --line: #dce2ea;
+  --canvas: #e9edf2;
+  --surface: #ffffff;
+  --on-accent-soft: rgba(255, 255, 255, 0.16);
+  --focus-ring: #0f3d91;
+  --white: #fff;
+  --blue-900: #1e3a8a;
+  --blue-200: #bfdbfe;
+  --blue-50: #eff6ff;
+  --blue-300: #93b4fa;
+  --slate-300: #cbd5e1;
+  --surface-subtle: #f8fafc;
+  --surface-chat: #f3f5f8;
+  --surface-shell: #f2f4f7;
+  --line-subtle: #e4e9f0;
+  --green: #22c55e;
+  --danger-ink: #991b1b;
+  --danger-line: #fecaca;
+  --danger-soft: #fff1f2;
+  --shadow-blue: rgba(37, 99, 235, 0.18);
+  --shadow-shell: rgba(23, 32, 51, 0.09);
+  --shadow-context: rgba(23, 32, 51, 0.06);
+  --shadow-app: rgba(0, 0, 0, 0.1);
+  --white-border: rgba(255, 255, 255, 0.62);
+  --green-ring: rgba(34, 197, 94, 0.13);
+  --focus-soft: rgba(37, 99, 235, 0.1);
+  --space-1: 1px;
+  --space-2: 2px;
+  --space-3: 3px;
+  --space-4: 4px;
+  --space-5: 5px;
+  --space-6: 6px;
+  --space-7: 7px;
+  --space-8: 8px;
+  --space-9: 9px;
+  --space-10: 10px;
+  --space-11: 11px;
+  --space-12: 12px;
+  --space-13: 13px;
+  --space-14: 14px;
+  --space-16: 16px;
+  --space-17: 17px;
+  --space-18: 18px;
+  --space-19: 19px;
+  --space-20: 20px;
+  --space-22: 22px;
+  --space-28: 28px;
+  --space-40: 40px;
+  --space-44: 44px;
+  --space-48: 48px;
+  --space-56: 56px;
+  --radius-sm: 5px;
+  --radius-md: 11px;
+  --radius-lg: 12px;
+  --radius-xl: 14px;
+  --radius-chat: 18px;
+  --radius-round: 50%;
+  --radius-panel: 16px;
+  --text-context-label: 0.7rem;
+  --text-context-mobile: 0.64rem;
+  --text-status: 0.74rem;
+  --text-voice-mobile: 0.72rem;
+  --text-avatar: 0.78rem;
+  --text-rule-copy: 0.8rem;
+  --text-voice: 0.82rem;
+  --text-notice: 0.86rem;
+  --text-context-value: 0.9rem;
+  --text-context-detail: 0.72rem;
+  --text-base: 1rem;
+  --text-rule-heading: 0.95rem;
+  --text-bubble: 0.96rem;
+  --text-agent-heading: 1.02rem;
+  --line-height-tight: 1.45;
+  --line-height-bubble: 1.65;
+  --touch-target: 44px;
+  --composer-height: 48px;
+  --header-height: 72px;
+  --mobile-composer-height: 72px;
+  --context-mobile-min-height: 62px;
+  --avatar-size: 44px;
+  --avatar-mobile-size: 40px;
+  --status-dot-size: 7px;
+  --typing-dot-size: 6px;
+  --tts-min-width: 64px;
+  --send-min-width: 82px;
+  --send-mobile-min-width: 70px;
+  --voice-min-width: 104px;
+  --voice-mobile-min-width: 76px;
+  --chat-input-max-height: 130px;
+  --rule-action-height: 42px;
+  --app-max-width: 900px;
+  --bubble-max-width: 760px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  width: 100%;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  overflow: hidden;
+  color: var(--ink);
+  background: var(--canvas);
+  display: flex;
+  justify-content: center;
+  font-family: Pretendard, "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  word-break: keep-all;
+  overflow-wrap: break-word;
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  touch-action: manipulation;
+}
+
+.chat-app {
+  width: min(100%, var(--app-max-width));
+  height: 100vh;
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-14);
+  gap: var(--space-12);
+  background: var(--surface-shell);
+  box-shadow: 0 0 20px var(--shadow-app);
+}

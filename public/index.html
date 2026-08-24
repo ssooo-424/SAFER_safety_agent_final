@@ -1,0 +1,254 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>사전설문</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="index.css" />
+  </head>
+  <body>
+
+    <div class="header-row">
+      <h1>사전설문</h1>
+    </div>
+    
+    <div class="progress" id="progressPill">Step 1 / 5</div>
+    <div class="error" id="stepError"></div>
+
+    <form id="surveyForm" onsubmit="return false;">
+      
+      <div class="step active" data-step="1">
+        <div class="intro-card">
+          <h2>안녕하십니까?</h2>
+          <p>
+            본 설문은 건설현장 <strong>"안전 메시지"</strong>경험의 전후 인식, 경험, 행동의지를 확인하기 위한 연구입니다.
+          </p>
+          <p>
+            본인의 실제 경험과 생각에 따라 솔직하게 응답해주세요.
+          </p>
+          <p>
+            응답해 주신 모든 내용은 <strong>통계법 제33조</strong>에 의해 비밀이 철저히 보장되며, 본 연구 목적 이외의 용도로는 절대 사용되지 않습니다.
+          </p>
+          <div class="intro-signoff">
+            <p>서울대학교 건설기술연구실</p>
+          </div>
+        </div>
+
+        <h3>1) 기본 프로필</h3>
+        <div class="card">
+          <div class="row">
+            <div>
+              <label>이름 <span class="required">*</span></label>
+              <input type="text" id="name" placeholder="예: 김철수" />
+            </div>
+            <div>
+              <label>소속 (회사명/현장명) <span class="required">*</span></label>
+              <input type="text" id="org" placeholder="예: 00건설 / A현장" />
+            </div>
+          </div>
+          
+          <label class="space-top-sm">직종 (주 업무) <span class="required">*</span></label>
+          <div class="chips" data-max="2" data-group="jobType">
+            <label class="chip"><input type="checkbox" value="기능공(직접 작업)" />기능공(직접 작업)</label>
+            <label class="chip"><input type="checkbox" value="장비 운전" />장비 운전</label>
+            <label class="chip"><input type="checkbox" value="신호수/유도자" />신호수/유도자</label>
+            <label class="chip"><input type="checkbox" value="관리자(반장/팀장)" />관리자(반장/팀장)</label>
+            <label class="chip"><input type="checkbox" value="안전관리자" />안전관리자</label>
+            <label class="chip"><input type="checkbox" value="기타" />기타</label>
+          </div>
+
+          <div class="row space-top-md">
+            <div>
+              <label>직급 <span class="required">*</span></label>
+              <input type="text" id="position" placeholder="예: 반장, 팀장, 소장" />
+            </div>
+            <div>
+              <label>경력 <span class="required">*</span></label>
+              <select id="career">
+                <option value="">선택해주세요</option>
+                <option value="1년 미만 (신규)">1년 미만 (신규)</option>
+                <option value="1년 ~ 3년">1년 ~ 3년</option>
+                <option value="3년 ~ 5년">3년 ~ 5년</option>
+                <option value="5년 ~ 10년">5년 ~ 10년</option>
+                <option value="10년 ~ 20년 (베테랑)">10년 ~ 20년 (베테랑)</option>
+                <option value="20년 이상 (장인)">20년 이상 (장인)</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="space-top-md">
+            <label>안전성향 유형 코드 <span class="required">*</span></label>
+            <select id="profileCode">
+              <option value="">외부 검사 결과를 선택해주세요</option>
+              <option value="FA">FA — 안전민감형</option>
+              <option value="DA">DA — 광역경계형</option>
+              <option value="IC">IC — 신중행동형</option>
+              <option value="IR">IR — 유연행동형</option>
+            </select>
+            <div class="muted">사전 인지 평가에서 받은 본인의 유형 코드를 선택해주세요.</div>
+          </div>
+          
+          <hr class="section-divider">
+          
+          <label>소중한 사람 (관계)</label>
+          <div class="row1">
+            <select id="importantPersonType">
+              <option value="가족">가족</option>
+              <option value="자녀">자녀 (아들/딸)</option>
+              <option value="배우자">배우자 (아내/남편)</option>
+              <option value="부모님">부모님</option>
+              <option value="연인">연인</option>
+              <option value="친구">친구</option>
+              <option value="나 자신">나 자신</option>
+            </select>
+          </div>
+          
+          <label class="space-top-sm">상세 정보 (이름, 나이 등)</label>
+          <div id="personList">
+            <div class="person-entry">
+              <input type="text" class="person-detail" placeholder="예: 지민이(7살), 아내" />
+            </div>
+          </div>
+          <button type="button" class="btn-add" id="addPersonBtn">+ 인원 추가</button>
+        </div>
+      </div>
+
+      <div class="step" data-step="2">
+        <h3>2) 위험지각 인식확인</h3>
+        <p class="risk-help">아래 슬라이더를 밀어서 본인의 인식을 표시해 주세요. (0% ~ 100%)</p>
+        
+        <div class="card">
+          <label>R1. 건설현장에서의 사고 피해는 <span id="val_q13" class="risk-value">50</span>% 정도 심각하다고 생각한다.</label>
+          <input type="range" class="slider" id="q13" min="0" max="100" step="10" value="50" oninput="document.getElementById('val_q13').innerText = this.value">
+          <div class="slider-ends">
+            <span>0% (전혀 안 심각)</span>
+            <span>100% (매우 심각)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>R2. 나는 건설현장에서 내가 사고를 겪을 가능성은 <span id="val_q14" class="risk-value">50</span>% 라고 생각한다.</label>
+          <input type="range" class="slider" id="q14" min="0" max="100" step="10" value="50" oninput="document.getElementById('val_q14').innerText = this.value">
+          <div class="slider-ends">
+            <span>0% (희박함)</span>
+            <span>100% (확실함)</span>
+          </div>
+        </div>
+
+        <div class="card">
+          <label>R3. 건설현장에서의 업무 위험 수준은 <span id="val_q15" class="risk-value">50</span>% 라고 생각한다.</label>
+          <input type="range" class="slider" id="q15" min="0" max="100" step="10" value="50" oninput="document.getElementById('val_q15').innerText = this.value">
+          <div class="slider-ends">
+            <span>0% (안전함)</span>
+            <span>100% (매우 위험)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="3">
+        <h3>3) 작업 정보</h3>
+        <div class="card">
+          <label>어떤 대공정이었나요? <span class="required">*</span></label>
+          <div class="chips" data-max="1" data-group="majorProcess" id="majorProcessChips">
+            <label class="chip"><input type="checkbox" value="가설공사" />가설공사</label>
+            <label class="chip"><input type="checkbox" value="토공사" />토공사</label>
+            <label class="chip"><input type="checkbox" value="골조공사" />골조공사</label>
+            <label class="chip"><input type="checkbox" value="마감공사" />마감공사</label>
+            <label class="chip"><input type="checkbox" value="설비공사" />설비공사</label>
+            <label class="chip"><input type="checkbox" value="전기·통신공사" />전기·통신공사</label>
+            <label class="chip"><input type="checkbox" value="양중·운반" />양중·운반</label>
+            <label class="chip"><input type="checkbox" value="운반/자재반입" />운반/자재반입</label>
+            <label class="chip"><input type="checkbox" value="토목·기타" />토목·기타(철거·해체 포함)</label>
+            <label class="chip"><input type="checkbox" value="공통" />공통</label>
+          </div>
+
+          <div id="detailProcessWrap" class="detail-wrap hidden">
+            <label>세부공정은 무엇이었나요?</label>
+            <div class="chips" data-max="1" data-group="detailProcess" id="detailProcessChips">
+            </div>
+          </div>
+
+          <label class="space-top-lg">주요 원인 (트리거) <span class="label-note">— 최대 3개</span></label>
+          <div class="chips" data-max="3" data-group="triggers">
+            <label class="chip"><input type="checkbox" value="일정/생산 압박 (빨리빨리)" />일정 압박</label>
+            <label class="chip"><input type="checkbox" value="반복 작업이라 익숙해서" />익숙함(방심)</label>
+            <label class="chip"><input type="checkbox" value="안전보호구/절차가 불편해서" />보호구/절차 불편</label>
+            <label class="chip"><input type="checkbox" value="주변 동료들과의 의사소통 미흡" />소통 미흡</label>
+            <label class="chip"><input type="checkbox" value="작업 공간 협소/자재 정리 안됨" />정리정돈 미흡</label>
+            <label class="chip"><input type="checkbox" value="위험이 눈에 잘 안 보여서" />위험 인지 불가</label>
+            <label class="chip"><input type="checkbox" value="피로/집중력 저하" />피로/집중 저하</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="4">
+        <h3>4) 위험 시나리오</h3>
+        
+        <div class="card">
+          <label>아래는 선택하신 공정에서 발생할 수 있는 위험 시나리오입니다.<br>
+            <span class="scenario-choice-note">가장 위험하다고 느끼는 시나리오를 선택해주세요.</span>
+          </label>
+
+          <div id="scenarioContainer">
+            <div class="scenario-loading" id="scenarioLoading">
+              ⏳ 공정에 맞는 시나리오를 불러오는 중...
+            </div>
+            <div class="scenario-grid" id="scenarioGrid" hidden>
+            </div>
+          </div>
+        </div>
+
+        <div id="postScenario" class="post-scenario">
+          <div class="card">
+            <label>Q2. 이 사고가 실제로 발생한다면, 어떤 결과가 있었을 것이라 생각하나요?</label>
+            <textarea id="consequence" placeholder="예: 3미터 아래로 추락해서 다리가 부러질 뻔함."></textarea>
+          </div>
+
+          <div class="card">
+            <label>Q3. 이러한 사고가 발생한 이유는 무엇이라고 생각하시나요?</label>
+            <div class="chips" data-max="1" data-group="feeling">
+              <label class="chip"><input type="checkbox" value="이 정도는 괜찮을 거라 생각해서" />이 정도는 괜찮을 거라 생각해서</label>
+              <label class="chip"><input type="checkbox" value="다들 크게 신경쓰지 않는 분위기 때문에" />다들 크게 신경쓰지 않는 분위기 때문에</label>
+              <label class="chip"><input type="checkbox" value="평소에 큰일 없이 지나간 경험이 있어서" />평소에 큰일 없이 지나간 경험이 있어서</label>
+              <label class="chip"><input type="checkbox" value="빨리 끝내고 쉬고 싶어서" />빨리 끝내고 쉬고 싶어서</label>
+              <label class="chip"><input type="checkbox" value="빨리해야한다는 일정 압박 때문에" />빨리해야한다는 일정 압박 때문에</label>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="step" data-step="5">
+        <h3>5) 위험 인식 저해 요인</h3>
+        <div class="card">
+          <label>건설현장에서 사고가 많이 발생하는 주요 원인이 뭐라고 생각하시나요? (2개)</label>
+          <div class="chips" data-max="2" data-group="lowReason">
+            <label class="chip"><input type="checkbox" value="일정/생산 압박" />일정 압박</label>
+            <label class="chip"><input type="checkbox" value="익숙함" />익숙함</label>
+            <label class="chip"><input type="checkbox" value="불편함" />불편함</label>
+            <label class="chip"><input type="checkbox" value="현장 분위기" />분위기</label>
+            <label class="chip"><input type="checkbox" value="안 보여서" />안 보임</label>
+            <label class="chip"><input type="checkbox" value="교육 비현실" />교육 비현실</label>
+            <label class="chip"><input type="checkbox" value="남 이야기" />남 이야기</label>
+          </div>
+          
+          <label class="space-top-md">왜 이러한 저해 요인이 발생한다고 생각하시나요? (선택)</label>
+          <textarea id="extraComment" placeholder="자유롭게 적어주세요."></textarea>
+        </div>
+      </div>
+
+      <div class="btns">
+        <button type="button" id="prevBtn" class="nav-btn" disabled>이전</button>
+        <button type="button" id="nextBtn" class="nav-btn">다음</button>
+      </div>
+
+    </form>
+
+    <script src="pre-survey/state.js"></script>
+    <script src="pre-survey/form.js"></script>
+    <script src="pre-survey/scenarios.js"></script>
+    <script src="pre-survey/submission.js"></script>
+    <script src="api-client.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,46 @@
+# 민감 정보
+.env
+.env.*
+!.env.example
+*.key
+*-service-account*.json
+google-credentials*.json
+credentials*.json
+safety-research-db-api_key_google.json
+
+# 참여자 개인정보와 실험 데이터
+data/
+survey/
+followup/
+chat_logs/
+results/
+*.participant.json
+
+# 원본 사고자료와 대용량 archive
+아카이브/
+archive/
+kosha_accident_cases/
+*.hwp
+*.pdf
+
+# 의존성, build 산출물과 runtime image
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+data_generated/images.egg
+data_generated/images/
+data_generated/nosurvey_*.json
+*.egg
+__pycache__/
+*.py[cod]
+
+# log, 임시 파일, OS·editor metadata
+*.log
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+.vscode/
+
+.playwright-cli/

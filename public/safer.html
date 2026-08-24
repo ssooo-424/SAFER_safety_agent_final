@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>SAFER 안전 대화</title>
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+  <link rel="stylesheet" href="/safer.css" />
+</head>
+<body>
+  <main class="chat-app">
+    <section class="context-panel" aria-label="사전설문 작업 정보">
+      <div class="context-title">
+        <span>SAFER</span>
+        <strong>선택한 작업 정보</strong>
+      </div>
+
+      <dl class="context-facts">
+        <div>
+          <dt>작업</dt>
+          <dd id="context-work">-</dd>
+        </div>
+        <div>
+          <dt>사고유형</dt>
+          <dd id="context-risk">-</dd>
+        </div>
+        <div>
+          <dt>주요원인</dt>
+          <dd id="context-trigger">-</dd>
+        </div>
+      </dl>
+    </section>
+
+    <section class="chat-shell" aria-label="SAFER 에이전트 채팅">
+      <header class="chat-header">
+        <div class="agent-avatar" id="agent-avatar" aria-hidden="true">AI</div>
+        <div class="agent-heading">
+          <h1 id="agent-name">안전 에이전트</h1>
+          <p><span class="status-dot" aria-hidden="true"></span>안전 대화 진행 중</p>
+        </div>
+      </header>
+
+      <div class="chat-box" id="chat-box" aria-live="polite" aria-busy="false">
+        <div class="typing-indicator" id="typing" hidden aria-label="에이전트가 답변을 작성하고 있습니다">
+          <span></span><span></span><span></span>
+        </div>
+      </div>
+
+      <div class="chat-notice" id="chat-notice" role="alert" hidden></div>
+
+      <div class="quick-replies" id="quick-replies"></div>
+
+      <section class="rule-confirm-panel" id="rule-confirm-panel" hidden>
+        <h2 id="rule-confirm-title">안전수칙을 확인해 주세요</h2>
+        <p id="rule-confirm-description"></p>
+        <div id="rule-confirm-list"></div>
+        <button type="button" id="rule-confirm-button" disabled>확인 완료</button>
+      </section>
+
+      <section class="rule-select-panel" id="rule-select-panel" hidden>
+        <h2>가장 자신 있게 지킬 수 있는 안전수칙</h2>
+        <p>세 가지 중 현장에서 가장 자신 있게 실천할 수 있는 안전수칙 하나를 선택해 주세요.</p>
+        <div id="rule-select-list"></div>
+        <button type="button" id="rule-select-button" disabled>선택 완료</button>
+      </section>
+
+      <form class="chat-input-form" id="chat-form" hidden>
+        <label class="sr-only" for="chat-input">답변 입력</label>
+        <textarea
+          id="chat-input"
+          rows="1"
+          maxlength="1000"
+          placeholder="작업 전에 무엇을 했어야 하는지 입력해 주세요"
+        ></textarea>
+        <button
+          type="button"
+          class="voice-input-button"
+          id="voice-input-button"
+          aria-label="음성으로 답변 입력"
+          aria-pressed="false"
+        >
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="20" height="20">
+            <path d="M12 14a3 3 0 0 0 3-3V5a3 3 0 1 0-6 0v6a3 3 0 0 0 3 3Z" />
+            <path d="M5 11a7 7 0 0 0 14 0M12 18v3M8.5 21h7" />
+          </svg>
+          <span>음성입력</span>
+        </button>
+        <button type="submit" id="send-button">보내기</button>
+      </form>
+    </section>
+  </main>
+
+  <script src="/safer/state.js" defer></script>
+  <script src="/safer/view.js" defer></script>
+  <script src="/safer/request-events.js" defer></script>
+  <script src="/safer/rule-selection.js" defer></script>
+  <script src="/safer/conversation.js" defer></script>
+  <script src="/api-client.js" defer></script>
+  <script src="/voice-client.js" defer></script>
+  <script src="/safer.js" defer></script>
+</body>
+</html>

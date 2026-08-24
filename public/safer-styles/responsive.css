@@ -1,0 +1,109 @@
+/* 720px 경계에서 현장 화면의 가로 여백을 제거합니다. */
+@media (max-width: 720px) {
+  .chat-app {
+    padding: 0;
+    gap: 0;
+  }
+
+  .context-panel,
+  .chat-shell {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .context-panel {
+    grid-template-columns: 1fr;
+    gap: var(--space-9);
+    border-top: 0;
+    padding: var(--space-10) var(--space-12) var(--space-12);
+  }
+
+  .context-title {
+    display: block;
+    border-right: 0;
+    padding: 0 var(--space-2);
+  }
+
+  .context-title span {
+    margin-right: var(--space-7);
+  }
+
+  .context-title strong {
+    font-size: var(--text-notice);
+  }
+
+  .context-facts {
+    gap: var(--space-6);
+  }
+
+  .context-facts div {
+    padding: var(--space-8) var(--space-9);
+  }
+
+  .context-facts dt {
+    font-size: var(--text-context-mobile);
+  }
+
+  .context-facts dd {
+    font-size: var(--text-status);
+  }
+
+  .chat-header {
+    min-height: var(--context-mobile-min-height);
+    padding: var(--space-9) var(--space-14);
+  }
+
+  .agent-avatar {
+    width: var(--avatar-mobile-size);
+    height: var(--avatar-mobile-size);
+    flex-basis: 40px;
+  }
+
+  .chat-box {
+    padding: var(--space-16) var(--space-13);
+  }
+
+  .bubble {
+    max-width: 88%;
+    padding: var(--space-12) var(--space-14);
+    font-size: var(--text-context-value);
+  }
+
+  .quick-replies,
+  .chat-input-form {
+    padding: var(--space-11) var(--space-12);
+  }
+
+  #chat-input {
+    min-height: var(--mobile-composer-height);
+  }
+
+  #send-button {
+    min-width: var(--send-mobile-min-width);
+    padding: 0 var(--space-14);
+  }
+
+  .voice-input-button {
+    min-width: var(--voice-mobile-min-width);
+    padding: 0 var(--space-9);
+    font-size: var(--text-voice-mobile);
+  }
+
+  .voice-input-button svg {
+    width: var(--space-18);
+    height: var(--space-18);
+  }
+}
+
+/* 동작 민감도 설정에서 상태 변화를 즉시 보입니다. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

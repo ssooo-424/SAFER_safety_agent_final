@@ -1,0 +1,90 @@
+.bubble {
+  max-width: min(74%, var(--bubble-max-width));
+  border-radius: var(--radius-chat);
+  padding: var(--space-13) var(--space-17);
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  font-size: var(--text-bubble);
+  line-height: var(--line-height-bubble);
+  animation: bubble-in 0.24s ease both;
+}
+
+.bubble.assistant {
+  align-self: flex-start;
+  border-bottom-left-radius: var(--radius-sm);
+  color: var(--white);
+  background: var(--blue);
+  box-shadow: 0 var(--space-5) var(--space-16) var(--shadow-blue);
+}
+
+.bubble.user {
+  align-self: flex-end;
+  border: 1px solid var(--blue-200);
+  border-bottom-right-radius: var(--radius-sm);
+  color: var(--blue-900);
+  background: var(--blue-soft);
+}
+
+.bubble-text {
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.message-tts-button {
+  min-width: var(--tts-min-width);
+  min-height: var(--touch-target);
+  margin-top: var(--space-8);
+  border: 1px solid var(--white-border);
+  border-radius: var(--radius-lg);
+  padding: 0 var(--space-12);
+  color: var(--white);
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--text-avatar);
+  font-weight: 800;
+  transition: background 0.15s ease, color 0.15s ease;
+}
+
+.message-tts-button:hover {
+  background: var(--on-accent-soft);
+}
+
+.message-tts-button:focus-visible {
+  outline: 3px solid var(--white);
+  outline-offset: 2px;
+  background: var(--on-accent-soft);
+  box-shadow: 0 0 0 2px var(--blue-dark);
+}
+
+.message-tts-button.is-speaking {
+  color: var(--blue-dark);
+  background: var(--white);
+}
+
+.typing-indicator {
+  align-self: flex-start;
+  width: fit-content;
+  border-radius: var(--radius-chat);
+  border-bottom-left-radius: var(--radius-sm);
+  padding: var(--space-13) var(--space-16);
+  background: var(--blue);
+  box-shadow: 0 var(--space-5) var(--space-16) var(--shadow-blue);
+}
+
+.typing-indicator span {
+  display: inline-block;
+  width: var(--typing-dot-size);
+  height: var(--typing-dot-size);
+  margin: 0 var(--space-2);
+  border-radius: 50%;
+  background: var(--white);
+  animation: typing 1s infinite alternate;
+}
+
+.typing-indicator span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.typing-indicator span:nth-child(3) {
+  animation-delay: 0.3s;
+}
