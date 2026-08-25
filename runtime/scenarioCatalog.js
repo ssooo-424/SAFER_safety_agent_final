@@ -1,5 +1,6 @@
 const fs = require("fs");
 const path = require("path");
+const { buildExperimentalScenarioView } = require("../llm/experimentalOutcome");
 
 function createScenarioCatalog({ rootDir, normalizeRiskType }) {
   const scenarioPath = path.join(rootDir, "reference_data", "scenarios.json");
@@ -42,7 +43,7 @@ function createScenarioCatalog({ rootDir, normalizeRiskType }) {
       if (selected.length >= 3) break;
       if (!selected.some(selectedItem => selectedItem.id === item.id)) selected.push(item);
     }
-    return selected;
+    return selected.map(item => buildExperimentalScenarioView(item));
   }
 
   function getSelectedScenario(incident = {}) {
@@ -64,6 +65,7 @@ function createScenarioCatalog({ rootDir, normalizeRiskType }) {
   function buildSelectedScenarioCase(incident = {}) {
     const selected = getSelectedScenario(incident);
     if (!selected) return null;
+    const participantView = buildExperimentalScenarioView(selected);
     const rowId = String(selected.id);
     return {
       fileName: `index-scenario-${rowId}`,
@@ -74,18 +76,20 @@ function createScenarioCatalog({ rootDir, normalizeRiskType }) {
       canonicalRiskType: selected.canonicalPrimaryAccident || normalizeRiskType(selected.primaryAccident),
       accidents: selected.accidents || [],
       canonicalAccidents: selected.canonicalAccidents || [],
-      trigger: selected.hazard || "",
-      hazard: selected.hazard || "",
+      trigger: participantView.hazard || "",
+      hazard: participantView.hazard || "",
       measures: selected.measures || "",
       riskLikelihood: selected.riskLikelihood || "",
       riskSeverity: selected.riskSeverity || "",
       riskLevel: selected.riskLevel || "",
       legalBasis: selected.legalBasis || "",
-      summary: selected.scenario || "",
-      textContent: [
+      summary: participantView.scenario || "",
+      sourceTextContent: [
         selected.hazard ? `유해위험요인: ${selected.hazard}` : "",
         selected.scenario ? `사고 시나리오: ${selected.scenario}` : ""
       ].filter(Boolean).join("\n"),
+      textContent: [participantView.hazard, participantView.scenario].filter(Boolean).join("\n"),
+      measureMatchSentence: selected.scenario || "",
       isRealCase: true,
       reviewStatus: selected.classificationReview?.status || "source_classification",
       reviewNote: selected.classificationReview?.reason || "",

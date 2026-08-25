@@ -1,7 +1,8 @@
 (function exposeSaferView() {
   function createChatView({ elements, state, speechController, dictationController }) {
-    function createBubble(text, role) {
+    function createBubble(text, role, { ttsText = "", showTts = true } = {}) {
       const normalizedText = String(text || "").trim();
+      const normalizedTtsText = String(ttsText || normalizedText).trim();
       const bubble = document.createElement("div");
       const bubbleText = document.createElement("div");
       bubble.className = `bubble ${role}`;
@@ -9,7 +10,13 @@
       bubbleText.textContent = normalizedText;
       bubble.appendChild(bubbleText);
 
-      if (role !== "assistant" || !normalizedText || !speechController.supported) {
+      if (
+        role !== "assistant" ||
+        !normalizedText ||
+        !normalizedTtsText ||
+        !showTts ||
+        !speechController.supported
+      ) {
         return bubble;
       }
 
@@ -21,20 +28,23 @@
 
       function renderSpeechState(speechState) {
         const speaking = speechState === "speaking";
-        ttsButton.classList.toggle("is-speaking", speaking);
-        ttsButton.setAttribute("aria-pressed", speaking ? "true" : "false");
+        const loading = speechState === "loading";
+        const active = speaking || loading;
+        ttsButton.classList.toggle("is-speaking", active);
+        ttsButton.setAttribute("aria-pressed", active ? "true" : "false");
+        ttsButton.setAttribute("aria-busy", loading ? "true" : "false");
         ttsButton.setAttribute(
           "aria-label",
-          speaking ? "이 AI 메시지 읽기 정지" : "이 AI 메시지 듣기"
+          active ? "이 AI 메시지 읽기 정지" : "이 AI 메시지 듣기"
         );
-        ttsButton.textContent = speaking ? "정지" : "듣기";
+        ttsButton.textContent = loading ? "생성 중" : speaking ? "정지" : "듣기";
       }
 
       renderSpeechState("idle");
       ttsButton.addEventListener("click", () => {
         speechController.toggle({
           id: messageId,
-          text: normalizedText,
+          text: normalizedTtsText,
           onStateChange: renderSpeechState
         });
       });
@@ -60,6 +70,7 @@
     function clearControls() {
       dictationController.stop();
       elements.quickReplies.innerHTML = "";
+      elements.scenarioRecallCard.hidden = true;
       elements.chatForm.hidden = true;
       elements.ruleConfirmPanel.hidden = true;
       elements.ruleSelectPanel.hidden = true;
@@ -79,10 +90,24 @@
     function showAnswerInput() {
       clearControls();
       state.inputMethod = "keyboard";
+      renderScenarioRecall();
+      elements.scenarioRecallCard.hidden = false;
       elements.chatForm.hidden = false;
       elements.chatInput.value = "";
       resizeChatInput();
       elements.chatInput.focus();
+    }
+
+    function renderScenarioRecall() {
+      const actualCase = state.safetyCase?.actual_case || {};
+      const scenario = state.safetyCase?.scenario || {};
+      elements.scenarioRecallWork.textContent = displayRawValue(
+        actualCase.process || scenario.process_content || scenario.detail_process || scenario.major_process
+      );
+      elements.scenarioRecallRisk.textContent = displayRawValue(
+        actualCase.risk_type || scenario.risk_type
+      );
+      elements.scenarioRecallSummary.textContent = displayRawValue(actualCase.summary);
     }
 
     function resizeChatInput() {

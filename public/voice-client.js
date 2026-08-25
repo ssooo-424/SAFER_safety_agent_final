@@ -94,21 +94,37 @@
   }
 
   function createSpeechController({
-    speechSynthesis,
-    UtteranceConstructor,
-    language = "ko-KR",
+    fetchImpl = globalThis.fetch,
+    AudioConstructor = globalThis.Audio,
+    createObjectURL = globalThis.URL?.createObjectURL?.bind(globalThis.URL),
+    revokeObjectURL = globalThis.URL?.revokeObjectURL?.bind(globalThis.URL),
+    endpoint = "/api/safer-tts",
+    playbackRate = 1.2,
+    onError,
   } = {}) {
     const supported = Boolean(
-      speechSynthesis
-      && typeof speechSynthesis.speak === "function"
-      && typeof speechSynthesis.cancel === "function"
-      && typeof UtteranceConstructor === "function"
+      typeof fetchImpl === "function"
+      && typeof AudioConstructor === "function"
+      && typeof createObjectURL === "function"
     );
+    const reportError = requiredCallback(onError);
+    const normalizedPlaybackRate = Number.isFinite(playbackRate)
+      ? Math.min(2, Math.max(0.5, playbackRate))
+      : 1.2;
     let active = null;
+
+    function cleanup(target) {
+      if (target.audio) {
+        target.audio.onended = null;
+        target.audio.onerror = null;
+      }
+      if (target.objectUrl && typeof revokeObjectURL === "function") revokeObjectURL(target.objectUrl);
+    }
 
     function markIdle(target) {
       if (active !== target) return;
       active = null;
+      cleanup(target);
       target.onStateChange("idle");
     }
 
@@ -116,9 +132,43 @@
       if (!active || !supported) return false;
       const target = active;
       active = null;
-      speechSynthesis.cancel();
+      target.abortController.abort();
+      target.audio?.pause?.();
+      cleanup(target);
       target.onStateChange("idle");
       return true;
+    }
+
+    async function loadAndPlay(target) {
+      try {
+        const response = await fetchImpl(endpoint, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "same-origin",
+          body: JSON.stringify({ text: target.text }),
+          signal: target.abortController.signal,
+        });
+        if (!response.ok) throw new Error("TTS request failed");
+        const blob = await response.blob();
+        if (active !== target) return;
+        target.objectUrl = createObjectURL(blob);
+        target.audio = new AudioConstructor(target.objectUrl);
+        target.audio.playbackRate = normalizedPlaybackRate;
+        if ("preservesPitch" in target.audio) target.audio.preservesPitch = true;
+        if ("webkitPreservesPitch" in target.audio) target.audio.webkitPreservesPitch = true;
+        if ("mozPreservesPitch" in target.audio) target.audio.mozPreservesPitch = true;
+        target.audio.onended = () => markIdle(target);
+        target.audio.onerror = () => {
+          markIdle(target);
+          reportError("음성을 재생하지 못했습니다. 다시 시도해 주세요.");
+        };
+        target.onStateChange("speaking");
+        await target.audio.play();
+      } catch (error) {
+        if (target.abortController.signal.aborted || active !== target) return;
+        markIdle(target);
+        reportError("음성을 생성하지 못했습니다. 잠시 후 다시 시도해 주세요.");
+      }
     }
 
     function toggle({ id, text, onStateChange } = {}) {
@@ -127,40 +177,24 @@
         cancel();
         return "stopped";
       }
-
       cancel();
       const normalizedText = String(text || "").trim();
       if (!normalizedText) return "unavailable";
-
-      const utterance = new UtteranceConstructor(normalizedText);
-      utterance.lang = language;
-      utterance.rate = 1;
-      utterance.pitch = 1;
-      utterance.volume = 1;
-      const voices = typeof speechSynthesis.getVoices === "function"
-        ? speechSynthesis.getVoices()
-        : [];
-      utterance.voice = voices.find((voice) => String(voice.lang || "").toLowerCase().startsWith("ko")) || null;
-
       const target = {
         id,
+        text: normalizedText,
         onStateChange: requiredCallback(onStateChange),
-        utterance,
+        abortController: new AbortController(),
+        audio: null,
+        objectUrl: "",
       };
       active = target;
-      utterance.onend = () => markIdle(target);
-      utterance.onerror = () => markIdle(target);
-      target.onStateChange("speaking");
-      speechSynthesis.speak(utterance);
-      return "speaking";
+      target.onStateChange("loading");
+      loadAndPlay(target);
+      return "loading";
     }
 
-    return {
-      supported,
-      cancel,
-      toggle,
-      isActive: (id) => active?.id === id,
-    };
+    return { supported, cancel, toggle, isActive: (id) => active?.id === id };
   }
 
   return {

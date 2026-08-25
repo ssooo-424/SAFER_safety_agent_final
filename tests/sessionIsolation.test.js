@@ -201,6 +201,39 @@ test('Given one request ID, when pre-survey submission is retried, then the orig
   assert.equal(exported.data, undefined);
 });
 
+test('Given a valid session, completed turn dwell timing is stored without changing conversation order', async () => {
+  const submitted = await request('/api/submit', {
+    method: 'POST',
+    body: SURVEY_PAYLOAD,
+    requestId: 'timing-submit',
+  });
+  const cookie = sessionCookie(submitted.response);
+  const timing = await request('/api/safer-timing', {
+    method: 'POST',
+    cookie,
+    body: {
+      turnTimings: {
+        turn0: {
+          activeMs: 8_400,
+          totalMs: 9_000,
+          hiddenMs: 600,
+          startedAt: '2026-08-25T01:00:00.000Z',
+          completedAt: '2026-08-25T01:00:09.000Z',
+          completionAction: 'quick_reply',
+        },
+      },
+    },
+  });
+  const stored = await serverModule.store.getSession(sessionToken(submitted.response));
+
+  assert.equal(timing.response.status, 200);
+  assert.equal(timing.json.ok, true);
+  assert.equal(stored.data.turnTimings.turn0.activeMs, 8_400);
+  assert.equal(stored.data.turnTimings.turn0.hiddenMs, 600);
+  assert.equal(stored.phase, 'created');
+  assert.equal(stored.nextTurn, 4);
+});
+
 test('Given proxied HTTPS, when a session cookie is issued, then Secure follows the actual request protocol', async () => {
   const httpsResult = await request('/api/submit', {
     method: 'POST', body: SURVEY_PAYLOAD, requestId: 'https-cookie', forwardedProto: 'https',

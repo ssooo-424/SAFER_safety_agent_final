@@ -75,6 +75,12 @@
     padding: var(--space-11) var(--space-12);
   }
 
+  .scenario-recall-card {
+    max-height: 132px;
+    margin: var(--space-9) var(--space-12) 0;
+    padding: var(--space-10) var(--space-12);
+  }
+
   #chat-input {
     min-height: var(--mobile-composer-height);
   }

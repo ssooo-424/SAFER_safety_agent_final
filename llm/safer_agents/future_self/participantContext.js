@@ -10,6 +10,9 @@ const {
   joinSafe
 } = educatorAgent;
 
+const { normalizeRelationship } = require("../../relationshipNarratives");
+const { getExperimentalOutcomeForSafetyCase } = require("../../experimentalOutcome");
+
 function getFutureInjury(
   riskType = ""
 ) {
@@ -64,7 +67,7 @@ function buildFutureSelfParticipantContext(
       .filter(Boolean)
       .join(" ");
 
-  const fatalOutcome =
+  const sourceFatalOutcome =
     /사망|숨졌|목숨을\s*잃/.test(
       actualOutcomeText
     );
@@ -78,10 +81,13 @@ function buildFutureSelfParticipantContext(
       incident.riskType
     );
 
-  const injury =
-    getFutureInjury(
-      riskType
-    );
+  const outcomePolicy = getExperimentalOutcomeForSafetyCase(safetyCase);
+  const injury = outcomePolicy.injurySource === "source"
+    ? {
+      part: "원자료에 기록된 신체 피해",
+      symptom: outcomePolicy.sourceInjuryText
+    }
+    : outcomePolicy.injury || getFutureInjury(riskType);
 
   const triggers =
     joinSafe(
@@ -98,26 +104,12 @@ function buildFutureSelfParticipantContext(
     triggers;
 
   return {
-    importantPerson:
-      cleanText(
-        profile.importantPerson
-      ) ||
-      "가족",
-
-    importantPersonDetail:
-      cleanText(
-        profile.importantPersonDetail
-      ),
+    importantPerson: normalizeRelationship(profile.importantPerson),
 
     triggers,
     feeling,
 
-    anticipatedConsequence:
-      cleanText(
-        incident.consequence
-      ),
-
-    fatalOutcome,
+    fatalOutcome: outcomePolicy.outcomeAdapted ? false : sourceFatalOutcome,
 
     riskType,
 
@@ -152,17 +144,11 @@ function formatFutureSelfParticipantContext(
 중요한 사람:
 ${context.importantPerson}
 
-중요한 사람에 대한 설명:
-${context.importantPersonDetail || "정보 없음"}
-
 행동 저해요인:
 ${context.triggers}
 
 작업을 강행하고 싶었던 감정 또는 이유:
 ${context.feeling}
-
-참가자가 예상한 결과:
-${context.anticipatedConsequence || "정보 없음"}
 
 위험유형:
 ${context.riskType}

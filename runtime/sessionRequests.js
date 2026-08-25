@@ -143,12 +143,14 @@ function createSessionRequests({ store, submitRateLimiter, llmRateLimiter, llmCo
   }
 
   return {
+    admitLlmRequest,
     beginSessionRequest,
     enforceSubmitRateLimit,
     errorMetadata,
     failStartedRequest,
     getRequestId,
-    publicRequestError
+    publicRequestError,
+    requireSession
   };
 }
 

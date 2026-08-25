@@ -24,7 +24,7 @@ window.PreSurveyState = (() => {
 
   return {
     PROCESS_MAP,
-    totalSteps: 5,
+    totalSteps: 4,
     getCurrentStep: () => currentStep,
     setCurrentStep: (step) => {
       currentStep = step;

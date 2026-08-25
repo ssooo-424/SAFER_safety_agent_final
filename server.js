@@ -16,6 +16,8 @@ const { createSafetyCaseService } = require("./runtime/safetyCaseService");
 const { createScenarioCatalog } = require("./runtime/scenarioCatalog");
 const { registerScenarioRoutes } = require("./runtime/scenarioRoutes");
 const { createSessionRequests } = require("./runtime/sessionRequests");
+const { registerTtsRoutes } = require("./runtime/ttsRoutes");
+const { createGoogleSheetsAutoSync } = require("./runtime/googleSheetsAutoSync");
 
 require("dotenv").config();
 
@@ -48,6 +50,7 @@ const sessionRequests = createSessionRequests({
   }),
   llmConcurrencyGate: createConcurrencyGate({ maxActive: config.llmConcurrencyMax })
 });
+const googleSheetsSync = createGoogleSheetsAutoSync({ store });
 
 const app = express();
 app.set("trust proxy", 1);
@@ -68,6 +71,7 @@ registerScenarioRoutes(app, catalog);
 registerParticipantRoutes(app, {
   store,
   sessionRequests,
+  googleSheetsSync,
   dataRoot: process.env.SAFER_DATA_DIR || null
 });
 registerSaferRoutes(app, {
@@ -76,7 +80,13 @@ registerSaferRoutes(app, {
   model: process.env.OPENAI_MODEL || "gpt-4o-mini",
   sessionRequests,
   buildSafetyCaseFromPayload,
-  prompts
+  prompts,
+  googleSheetsSync
+});
+registerTtsRoutes(app, {
+  openai,
+  sessionRequests,
+  model: process.env.OPENAI_TTS_MODEL || "gpt-4o-mini-tts"
 });
 registerHealthRetiredRoutes(app, { store, config, env: process.env });
 

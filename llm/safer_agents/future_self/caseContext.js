@@ -6,6 +6,7 @@ const {
   cleanText,
   joinSafe
 } = educatorAgent;
+const { buildExperimentalOutcomePromptContext } = require("../../experimentalOutcome");
 
 function buildFutureSelfIntroSafetyCaseContext(
   safetyCase = {}
@@ -69,6 +70,8 @@ ${cleanText(actualCase.summary)}
 
 실제 사고 원문:
 ${cleanText(actualCase.raw_text)}
+
+${buildExperimentalOutcomePromptContext(safetyCase)}
 `.trim();
 }
 

@@ -13,7 +13,7 @@
       <h1>사전설문</h1>
     </div>
     
-    <div class="progress" id="progressPill">Step 1 / 5</div>
+    <div class="progress" id="progressPill">Step 1 / 4</div>
     <div class="error" id="stepError"></div>
 
     <form id="surveyForm" onsubmit="return false;">
@@ -22,7 +22,7 @@
         <div class="intro-card">
           <h2>안녕하십니까?</h2>
           <p>
-            본 설문은 건설현장 <strong>"안전 메시지"</strong>경험의 전후 인식, 경험, 행동의지를 확인하기 위한 연구입니다.
+            본 설문은 산업현장 <strong>"안전 메시지"</strong> 경험의 전후 인식, 경험, 행동의지를 확인하기 위한 연구입니다.
           </p>
           <p>
             본인의 실제 경험과 생각에 따라 솔직하게 응답해주세요.
@@ -43,8 +43,8 @@
               <input type="text" id="name" placeholder="예: 김철수" />
             </div>
             <div>
-              <label>소속 (회사명/현장명) <span class="required">*</span></label>
-              <input type="text" id="org" placeholder="예: 00건설 / A현장" />
+              <label>소속 (회사명/사업장명) <span class="required">*</span></label>
+              <input type="text" id="org" placeholder="예: 회사명 / 사업장명" />
             </div>
           </div>
           
@@ -95,7 +95,8 @@
           <div class="row1">
             <select id="importantPersonType">
               <option value="가족">가족</option>
-              <option value="자녀">자녀 (아들/딸)</option>
+              <option value="아들">아들</option>
+              <option value="딸">딸</option>
               <option value="배우자">배우자 (아내/남편)</option>
               <option value="부모님">부모님</option>
               <option value="연인">연인</option>
@@ -104,50 +105,11 @@
             </select>
           </div>
           
-          <label class="space-top-sm">상세 정보 (이름, 나이 등)</label>
-          <div id="personList">
-            <div class="person-entry">
-              <input type="text" class="person-detail" placeholder="예: 지민이(7살), 아내" />
-            </div>
-          </div>
-          <button type="button" class="btn-add" id="addPersonBtn">+ 인원 추가</button>
         </div>
       </div>
 
       <div class="step" data-step="2">
-        <h3>2) 위험지각 인식확인</h3>
-        <p class="risk-help">아래 슬라이더를 밀어서 본인의 인식을 표시해 주세요. (0% ~ 100%)</p>
-        
-        <div class="card">
-          <label>R1. 건설현장에서의 사고 피해는 <span id="val_q13" class="risk-value">50</span>% 정도 심각하다고 생각한다.</label>
-          <input type="range" class="slider" id="q13" min="0" max="100" step="10" value="50" oninput="document.getElementById('val_q13').innerText = this.value">
-          <div class="slider-ends">
-            <span>0% (전혀 안 심각)</span>
-            <span>100% (매우 심각)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <label>R2. 나는 건설현장에서 내가 사고를 겪을 가능성은 <span id="val_q14" class="risk-value">50</span>% 라고 생각한다.</label>
-          <input type="range" class="slider" id="q14" min="0" max="100" step="10" value="50" oninput="document.getElementById('val_q14').innerText = this.value">
-          <div class="slider-ends">
-            <span>0% (희박함)</span>
-            <span>100% (확실함)</span>
-          </div>
-        </div>
-
-        <div class="card">
-          <label>R3. 건설현장에서의 업무 위험 수준은 <span id="val_q15" class="risk-value">50</span>% 라고 생각한다.</label>
-          <input type="range" class="slider" id="q15" min="0" max="100" step="10" value="50" oninput="document.getElementById('val_q15').innerText = this.value">
-          <div class="slider-ends">
-            <span>0% (안전함)</span>
-            <span>100% (매우 위험)</span>
-          </div>
-        </div>
-      </div>
-
-      <div class="step" data-step="3">
-        <h3>3) 작업 정보</h3>
+        <h3>2) 작업 정보</h3>
         <div class="card">
           <label>어떤 대공정이었나요? <span class="required">*</span></label>
           <div class="chips" data-max="1" data-group="majorProcess" id="majorProcessChips">
@@ -182,8 +144,8 @@
         </div>
       </div>
 
-      <div class="step" data-step="4">
-        <h3>4) 위험 시나리오</h3>
+      <div class="step" data-step="3">
+        <h3>3) 위험 시나리오</h3>
         
         <div class="card">
           <label>아래는 선택하신 공정에서 발생할 수 있는 위험 시나리오입니다.<br>
@@ -201,12 +163,7 @@
 
         <div id="postScenario" class="post-scenario">
           <div class="card">
-            <label>Q2. 이 사고가 실제로 발생한다면, 어떤 결과가 있었을 것이라 생각하나요?</label>
-            <textarea id="consequence" placeholder="예: 3미터 아래로 추락해서 다리가 부러질 뻔함."></textarea>
-          </div>
-
-          <div class="card">
-            <label>Q3. 이러한 사고가 발생한 이유는 무엇이라고 생각하시나요?</label>
+            <label>Q2. 이러한 사고가 발생한 이유는 무엇이라고 생각하시나요?</label>
             <div class="chips" data-max="1" data-group="feeling">
               <label class="chip"><input type="checkbox" value="이 정도는 괜찮을 거라 생각해서" />이 정도는 괜찮을 거라 생각해서</label>
               <label class="chip"><input type="checkbox" value="다들 크게 신경쓰지 않는 분위기 때문에" />다들 크게 신경쓰지 않는 분위기 때문에</label>
@@ -218,10 +175,10 @@
         </div>
       </div>
 
-      <div class="step" data-step="5">
-        <h3>5) 위험 인식 저해 요인</h3>
+      <div class="step" data-step="4">
+        <h3>4) 위험 인식 저해 요인</h3>
         <div class="card">
-          <label>건설현장에서 사고가 많이 발생하는 주요 원인이 뭐라고 생각하시나요? (2개)</label>
+          <label>산업현장에서 사고가 많이 발생하는 주요 원인이 무엇이라고 생각하시나요? (2개)</label>
           <div class="chips" data-max="2" data-group="lowReason">
             <label class="chip"><input type="checkbox" value="일정/생산 압박" />일정 압박</label>
             <label class="chip"><input type="checkbox" value="익숙함" />익숙함</label>

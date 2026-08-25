@@ -39,12 +39,11 @@ function setStep(step) {
 
   showError("");
   window.scrollTo(0, 0);
-  if (step === 4) window.PreSurveyScenarios.loadScenarios();
+  if (step === 3) window.PreSurveyScenarios.loadScenarios();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   setStep(1);
-  form.bindPeopleControls();
   form.bindChipLimits();
   form.bindProcessOptions();
 
@@ -82,6 +81,7 @@ document.addEventListener("DOMContentLoaded", () => {
       );
       if (json.ok) {
         sessionStorage.removeItem(SUBMIT_REQUEST_ID_KEY);
+        sessionStorage.removeItem("safer-turn-timings");
         localStorage.removeItem("preSurveyResult");
         localStorage.removeItem("saferAssignedCondition");
         localStorage.removeItem("commitSelectedRule");

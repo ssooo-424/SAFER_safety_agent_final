@@ -9,12 +9,26 @@ const {
   buildExportRow,
 } = require('../scripts/google_sheets/sessionRows');
 const {
+  columnName,
   createSheetsGateway,
 } = require('../scripts/google_sheets/sheetsGateway');
 const {
   exportCompletedSessions,
 } = require('../scripts/google_sheets/exporter');
 const { formatExportFailure } = require('../scripts/exportGoogleSheets');
+const { createGoogleSheetsAutoSync } = require('../runtime/googleSheetsAutoSync');
+
+function automaticSyncEnv() {
+  return {
+    GOOGLE_SHEETS_URL: 'https://docs.google.com/spreadsheets/d/test-sheet_123/edit',
+    GOOGLE_SHEETS_TAB: 'SAFER_EXPORT',
+    GOOGLE_SERVICE_ACCOUNT_JSON: JSON.stringify({
+      type: 'service_account',
+      client_email: 'safer-export@example.iam.gserviceaccount.com',
+      private_key: 'private-value',
+    }),
+  };
+}
 
 test('Google Sheets export config accepts a target URL and Service Account JSON', () => {
   const config = loadSheetsExportConfig({
@@ -30,7 +44,7 @@ test('Google Sheets export config accepts a target URL and Service Account JSON'
 
   assert.equal(config.databaseUrl, 'postgresql://render.internal/safer');
   assert.equal(config.spreadsheetId, 'test-sheet_123');
-  assert.equal(config.sheetName, '현장실험');
+  assert.equal(config.sheetName, '현장실험_ANALYSIS');
   assert.equal(config.credentials.client_email, 'safer-export@example.iam.gserviceaccount.com');
   assert.equal(JSON.stringify(config).includes('private-value'), true);
 });
@@ -81,12 +95,12 @@ test('completed session maps to one stable research row without the session bear
   assert.equal(row[0], 'participant-1');
   assert.equal(row[1], 'coworker');
   assert.equal(row[4], 42);
-  assert.equal(row[7], '익명1');
-  assert.equal(row[8], '현장A');
-  assert.equal(row[9], 'dictation');
-  assert.equal(row[10], '=말한 내용');
+  assert.equal(row[EXPORT_HEADERS.indexOf('name')], '익명1');
+  assert.equal(row[EXPORT_HEADERS.indexOf('org')], '현장A');
+  assert.equal(row[EXPORT_HEADERS.indexOf('turn5_input_method')], 'dictation');
+  assert.equal(row[EXPORT_HEADERS.indexOf('turn5_user_message')], '=말한 내용');
   assert.equal(row.includes('must-not-be-exported'), false);
-  assert.equal(JSON.parse(row.at(-1)).q1, 5);
+  assert.equal(JSON.parse(row[EXPORT_HEADERS.indexOf('post_survey_json')]).q1, 5);
 });
 
 test('Sheets gateway updates known participants and assigns new participants deterministic rows', async () => {
@@ -132,7 +146,10 @@ test('Sheets gateway updates known participants and assigns new participants det
   assert.equal(writes[0].requestBody.valueInputOption, 'RAW');
   assert.deepEqual(
     writes[0].requestBody.data.map((entry) => entry.range),
-    ["'현장실험'!A2:S2", "'현장실험'!A4:S4"],
+    [
+      `'현장실험'!A2:${columnName(EXPORT_HEADERS.length)}2`,
+      `'현장실험'!A4:${columnName(EXPORT_HEADERS.length)}4`,
+    ],
   );
 });
 
@@ -171,6 +188,44 @@ test('Sheets gateway reconciles an ambiguous tab-creation failure before retryin
 
   assert.deepEqual(result, { total: 1, inserted: 1, updated: 0 });
   assert.equal(addCalls, 1);
+});
+
+test('Sheets gateway safely extends an existing analysis header with appended timing columns', async () => {
+  const headerUpdates = [];
+  const writes = [];
+  const priorHeaders = EXPORT_HEADERS.slice(0, EXPORT_HEADERS.indexOf('turn0_dwell_sec'));
+  const sheets = {
+    spreadsheets: {
+      get: async () => ({ data: { sheets: [{ properties: { title: 'SAFER_EXPORT_ANALYSIS' } }] } }),
+      batchUpdate: async () => ({ data: {} }),
+      values: {
+        batchGet: async () => ({
+          data: { valueRanges: [{ values: [priorHeaders] }, { values: [['participant-old']] }] },
+        }),
+        update: async request => {
+          headerUpdates.push(request.requestBody.values[0]);
+          return { data: {} };
+        },
+        batchUpdate: async request => {
+          writes.push(request);
+          return { data: {} };
+        },
+      },
+    },
+  };
+  const gateway = createSheetsGateway({
+    sheets,
+    spreadsheetId: 'sheet-id',
+    sheetName: 'SAFER_EXPORT_ANALYSIS',
+  });
+
+  const result = await gateway.upsertRows([
+    ['participant-new', ...Array(EXPORT_HEADERS.length - 1).fill('')],
+  ]);
+
+  assert.deepEqual(result, { total: 1, inserted: 1, updated: 0 });
+  assert.deepEqual(headerUpdates, [EXPORT_HEADERS]);
+  assert.equal(writes.length, 1);
 });
 
 test('export reads only completed Postgres sessions while holding one advisory lock', async () => {
@@ -213,4 +268,103 @@ test('export reads only completed Postgres sessions while holding one advisory l
   assert.match(queries.find((sql) => sql.includes('FROM experiment_sessions')), /phase = 'completed'/);
   assert.equal(queries.some((sql) => sql.includes('pg_advisory_unlock')), true);
   assert.equal(released, true);
+});
+
+test('completed post-survey sessions automatically upsert one analysis row', async () => {
+  const receivedRows = [];
+  const sync = createGoogleSheetsAutoSync({
+    env: automaticSyncEnv(),
+    store: {
+      getSession: async () => ({
+        participantId: 'participant-auto',
+        condition: 'future_self',
+        assignmentMode: 'balanced',
+        phase: 'completed',
+        createdAt: '2026-08-25T01:00:00.000Z',
+        data: {
+          scenarioRowId: 25,
+          turn5: { userMessage: '작업 전 가스 농도를 확인한다', inputMethod: 'keyboard' },
+          postSurvey: { timestamp: '2026-08-25T01:10:00.000Z', data: { P1_1: 5 } },
+        },
+      }),
+    },
+    gateway: {
+      upsertRows: async (rows) => {
+        receivedRows.push(...rows);
+        return { total: rows.length, inserted: 1, updated: 0 };
+      },
+    },
+  });
+
+  const result = await sync.syncSessionById('session-auto');
+
+  assert.equal(sync.enabled, true);
+  assert.equal(sync.sheetName, 'SAFER_EXPORT_ANALYSIS');
+  assert.deepEqual(result, { total: 1, inserted: 1, updated: 0 });
+  assert.equal(receivedRows[0][EXPORT_HEADERS.indexOf('participant_id')], 'participant-auto');
+  assert.equal(receivedRows[0][EXPORT_HEADERS.indexOf('turn5_user_message')], '작업 전 가스 농도를 확인한다');
+  assert.equal(receivedRows[0][EXPORT_HEADERS.indexOf('P1_1')], 5);
+});
+
+test('index pre-survey submissions create a partial analysis row before conversation completion', async () => {
+  const receivedRows = [];
+  const sync = createGoogleSheetsAutoSync({
+    env: automaticSyncEnv(),
+    store: {
+      getSession: async () => ({
+        participantId: 'participant-pre',
+        condition: 'coworker',
+        assignmentMode: 'balanced',
+        phase: 'created',
+        createdAt: '2026-08-25T02:00:00.000Z',
+        data: {
+          scenarioRowId: 82,
+          preSurvey: {
+            profile: { name: '사전 참여자', org: '삼성중공업', jobType: ['기능공'] },
+            incident: { majorProcess: '조립', riskType: '끼임', sentence: '선택한 사고 시나리오' },
+          },
+        },
+      }),
+    },
+    gateway: {
+      upsertRows: async (rows) => {
+        receivedRows.push(...rows);
+        return { total: rows.length, inserted: 1, updated: 0 };
+      },
+    },
+  });
+
+  const result = await sync.syncSessionById('pre-session');
+  const row = receivedRows[0];
+
+  assert.deepEqual(result, { total: 1, inserted: 1, updated: 0 });
+  assert.equal(row[EXPORT_HEADERS.indexOf('phase')], 'created');
+  assert.equal(row[EXPORT_HEADERS.indexOf('name')], '사전 참여자');
+  assert.equal(row[EXPORT_HEADERS.indexOf('org')], '삼성중공업');
+  assert.equal(row[EXPORT_HEADERS.indexOf('selected_scenario')], '선택한 사고 시나리오');
+  assert.equal(row[EXPORT_HEADERS.indexOf('post_survey_json')], '');
+});
+
+test('analysis rows expose per-turn active dwell and separate hidden time', () => {
+  const row = buildExportRow({
+    participantId: 'participant-timing',
+    condition: 'educator',
+    assignmentMode: 'balanced',
+    phase: 'turn_2_completed',
+    createdAt: '2026-08-25T01:00:00.000Z',
+    data: {
+      scenarioRowId: 1,
+      turnTimings: {
+        turn0: { activeMs: 8_400, totalMs: 9_000, hiddenMs: 600 },
+        turn1: { activeMs: 15_200, totalMs: 17_000, hiddenMs: 1_800 },
+      },
+    },
+  });
+
+  assert.equal(row[EXPORT_HEADERS.indexOf('turn0_dwell_sec')], 8.4);
+  assert.equal(row[EXPORT_HEADERS.indexOf('turn1_dwell_sec')], 15.2);
+  assert.equal(row[EXPORT_HEADERS.indexOf('chat_total_dwell_sec')], 23.6);
+  assert.equal(row[EXPORT_HEADERS.indexOf('chat_total_elapsed_sec')], 26);
+  assert.equal(row[EXPORT_HEADERS.indexOf('chat_hidden_sec')], 2.4);
+  assert.equal(JSON.parse(row[EXPORT_HEADERS.indexOf('turn_timings_json')]).turn0.activeMs, 8_400);
 });

@@ -76,7 +76,6 @@ function summarizeContext(payload, scenarioId) {
 - 트리거: ${joinSafe(i.triggers, ", ")}
 - 선택한 시나리오: "${i.sentence || ""}"
   (⚠️ 이 시나리오 속 '작업자'는 제3자가 아니라 사용자 본인이다. 언급 시 반드시 2인칭("네가", "너가")으로 변환할 것)
-- 예상 결과: ${i.consequence || ""}
 - 강행 이유: ${i.feeling || ""}
 `.trim();
 }

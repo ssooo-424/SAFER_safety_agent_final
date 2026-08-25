@@ -8,7 +8,14 @@ function createSafetyCaseService({ catalog, buildScenarioRules, buildSafetyCase 
       return { selectedCase: null, scenarioRulesResult: null, safetyCase: null };
     }
 
-    const scenarioRulesResult = buildScenarioRules(payload);
+    const rulesPayload = {
+      ...payload,
+      incident: {
+        ...(payload.incident || {}),
+        sentence: selectedCase.measureMatchSentence || payload.incident?.sentence || ""
+      }
+    };
+    const scenarioRulesResult = buildScenarioRules(rulesPayload);
     const safetyCase = buildSafetyCase({
       scenarioId,
       payload,

@@ -9,10 +9,6 @@ function getKoreanRuleCountLabel(count) {
   return `${count}가지`;
 }
 
-function joinCoveredAcknowledgements(items = []) {
-  return items.map((item) => cleanText(item.action)).filter(Boolean).join(", ");
-}
-
 function buildTurn5Feedback({ safetyCase, userMessage = "", evaluation = {} }) {
   const coverage = normalizeTurn5Evaluation(evaluation, safetyCase);
   const covered = coverage.filter((item) => item.status === "covered");
@@ -20,8 +16,7 @@ function buildTurn5Feedback({ safetyCase, userMessage = "", evaluation = {} }) {
   const lines = [];
 
   if (covered.length > 0) {
-    const coveredText = joinCoveredAcknowledgements(covered);
-    lines.push(`맞아. 네가 말한 ${coveredText}이 중요한 예방조치야.`);
+    lines.push("맞아. 네가 말한 예방조치가 사고를 막는 데 중요해.");
 
     if (missing.length > 0) {
       lines.push("");

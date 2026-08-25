@@ -12,6 +12,63 @@
   display: none;
 }
 
+.scenario-recall-card {
+  flex: 0 0 auto;
+  max-height: 150px;
+  margin: var(--space-10) var(--space-18) 0;
+  overflow-y: auto;
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  border-radius: var(--radius-chat);
+  padding: var(--space-11) var(--space-14);
+  color: var(--ink);
+  background: rgba(239, 246, 255, 0.9);
+  box-shadow: 0 -4px 18px rgba(15, 23, 42, 0.12);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+.scenario-recall-card[hidden] {
+  display: none;
+}
+
+.scenario-recall-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+.scenario-recall-heading > span {
+  color: var(--blue);
+  font-size: var(--text-context-mobile);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.scenario-recall-heading h2 {
+  margin: 0;
+  font-size: var(--text-base);
+}
+
+.scenario-recall-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-5) var(--space-14);
+  margin-top: var(--space-7);
+  color: var(--muted);
+  font-size: var(--text-status);
+}
+
+.scenario-recall-meta strong {
+  margin-right: var(--space-4);
+  color: var(--ink);
+}
+
+.scenario-recall-card > p {
+  margin: var(--space-7) 0 0;
+  font-size: var(--text-notice);
+  line-height: 1.5;
+}
+
 .rule-confirm-panel[hidden],
 .rule-select-panel[hidden] {
   display: none;
@@ -20,14 +77,14 @@
 .rule-confirm-panel h2,
 .rule-select-panel h2 {
   margin: 0;
-  font-size: var(--text-rule-heading);
+  font-size: calc(var(--text-rule-heading) + 1px);
 }
 
 .rule-confirm-panel > p,
 .rule-select-panel > p {
   margin: var(--space-5) 0 var(--space-11);
   color: var(--muted);
-  font-size: var(--text-rule-copy);
+  font-size: calc(var(--text-rule-copy) + 1px);
   line-height: 1.45;
 }
 
@@ -62,7 +119,7 @@
 }
 
 .rule-option span {
-  font-size: var(--text-voice);
+  font-size: calc(var(--text-voice) + 1px);
   line-height: 1.45;
 }
 
@@ -76,6 +133,7 @@
   color: var(--white);
   background: var(--blue);
   cursor: pointer;
+  font-size: calc(var(--text-base) + 1px);
   font-weight: 800;
 }
 

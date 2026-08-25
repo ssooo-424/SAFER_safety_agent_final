@@ -48,8 +48,7 @@ function buildFutureSelfIntroUserPrompt({
 6. 가족·관계·생계·커리어 피해는 Turn 3 뒤에 고정 문단으로 결합되므로 생성문에는 넣지 마세요.`
       : `3. "${context.injury.part}" 부상과 "${context.injury.symptom}"를 그대로 반영하세요.
 4. 이 부상 때문에 씻기, 밥 먹기, 이동하기 같은 평범한 일상이 어려워진 모습을 묘사하세요.
-5. 참가자가 예상한 결과가 있다면 신체적 결과를 묘사할 때 그 의미를 참고하세요: "${context.anticipatedConsequence || "정보 없음"}"
-6. 가족·관계·병원비·생계·커리어 피해는 Turn 3 뒤에 고정 문단으로 결합되므로 생성문에는 넣지 마세요.`;
+5. 가족·관계·병원비·생계·커리어 피해는 Turn 3 뒤에 고정 문단으로 결합되므로 생성문에는 넣지 마세요.`;
 
   return `
 위 실제 사고자료와 Future Self 개인화 입력을 이용하여

@@ -36,7 +36,7 @@
     const {
       elements, state, dictationController, clearNotice, showNotice,
       resizeChatInput, submitPreventionAnswer, appendBubble,
-      revealFinalSafetyRules, completeRuleSelection
+      revealFinalSafetyRules, completeRuleSelection, completeTurnTiming
     } = options;
     elements.voiceInputButton.addEventListener("click", () => {
       if (state.busy || state.currentTurn !== 4) return;
@@ -59,6 +59,7 @@
     });
     elements.ruleConfirmButton.addEventListener("click", async () => {
       if (state.busy || elements.ruleConfirmButton.disabled) return;
+      completeTurnTiming("missing_rules_confirmed");
       appendBubble(
         state.condition === "future_self"
           ? "빠졌던 안전수칙을 모두 확인했어."

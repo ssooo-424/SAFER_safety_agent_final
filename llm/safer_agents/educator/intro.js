@@ -1,5 +1,6 @@
 const educatorPersona = require("../../safer_personas/educator.json");
 const { cleanText, joinSafe } = require("./formatting");
+const { buildExperimentalOutcomePromptContext } = require("../../experimentalOutcome");
 
 // Persona와 사고 원문을 함께 고정해 Turn 1~3 간 사실 중복을 LLM prompt에서 통제한다.
 function buildEducatorPersonaContext() {
@@ -105,6 +106,8 @@ ${cleanText(actualCase.summary)}
 
 실제 사고 원문:
 ${cleanText(actualCase.raw_text)}
+
+${buildExperimentalOutcomePromptContext(safetyCase)}
 `.trim();
 }
 
@@ -139,6 +142,8 @@ ${buildEducatorPersonaContext()}
 13. 자료에 없는 가족 피해, 경제적 피해, 후유증을 추가하지 마세요.
 14. 공포를 과장하거나 자극적인 표현을 사용하지 마세요.
 15. 전문적이고 차분하며 이해하기 쉬운 교육자 말투를 유지하세요.
+16. 실제 사고 원문을 통째로 복사하지 말고 각 Turn에 필요한 사실만 골라 자연스러운 존댓말로 다시 표현하세요.
+17. 출력 전에 Turn 1~3을 연속해서 읽고 같은 사고 사실이 반복되지 않는지, 앞뒤 문맥과 문장 종결이 자연스러운지 확인하세요.
 
 
 ${buildEducatorIntroSafetyCaseContext(safetyCase)}

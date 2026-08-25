@@ -5,6 +5,30 @@ function parseOpenAiJson(completion) {
   );
 }
 
+function stripRepeatedCoworkerExperience(value, repeatedExperience) {
+  const text = String(value || "").trim();
+  const repeated = String(repeatedExperience || "").trim();
+  if (!text || !repeated) return text;
+  return text
+    .split(repeated)
+    .join("")
+    .replace(/\s+([.!?])/g, "$1")
+    .replace(/^[.!?\s]+/, "")
+    .replace(/\s{2,}/g, " ")
+    .trim();
+}
+
+const {
+  getExperimentalOutcomeForSafetyCase,
+  ensureExperimentalInjuryText,
+  sanitizeGeneratedOutcomeText
+} = require("../llm/experimentalOutcome");
+const {
+  STANDARDIZED_ORGANIZATIONAL_OUTCOME,
+  buildStandardizedOrganizationalOutcomeMessages
+} = require("../llm/standardizedOrganizationalOutcome");
+const { normalizeTurnTimings } = require("./turnTiming");
+
 function registerSaferRoutes(app, dependencies) {
   const {
     store,
@@ -12,8 +36,23 @@ function registerSaferRoutes(app, dependencies) {
     model,
     sessionRequests,
     buildSafetyCaseFromPayload,
-    prompts
+    prompts,
+    googleSheetsSync
   } = dependencies;
+
+  app.post("/api/safer-timing", async (req, res) => {
+    try {
+      const session = await sessionRequests.requireSession(req, res);
+      if (!session) return;
+      const received = normalizeTurnTimings(req.body?.turnTimings);
+      const turnTimings = { ...(session.data.turnTimings || {}), ...received };
+      await store.updateSession(session.sessionId, { data: { turnTimings } });
+      void googleSheetsSync?.syncSessionById(session.sessionId);
+      return res.json({ ok: true });
+    } catch (error) {
+      return sessionRequests.publicRequestError(req, res, error);
+    }
+  });
 
   app.post("/api/safer-start", async (req, res) => {
     let context;
@@ -80,13 +119,26 @@ function registerSaferRoutes(app, dependencies) {
         temperature: 0.2
       });
       const script = parseOpenAiJson(completion);
-      const turn1 = String(script?.turn1 || "").trim();
-      const turn2 = String(script?.turn2 || "").trim();
-      const turn3 = String(script?.turn3 || "").trim();
+      const outcomePolicy = getExperimentalOutcomeForSafetyCase(safetyCase);
+      const sanitize = value => sanitizeGeneratedOutcomeText(value, outcomePolicy);
+      const saferAgent = prompts.getSaferAgent(session.condition);
+      const generatedTurn1 = sanitize(String(script?.turn1 || "").trim());
+      const repeatedCoworkerExperience = session.condition === "coworker"
+        ? saferAgent.persona?.persona_manipulation?.standardized_peer_experience
+        : "";
+      const turn1 = stripRepeatedCoworkerExperience(
+        generatedTurn1,
+        repeatedCoworkerExperience
+      );
+      const turn2 = sanitize(String(script?.turn2 || "").trim());
+      const turn3 = ensureExperimentalInjuryText(
+        sanitize(String(script?.turn3 || "").trim()),
+        safetyCase,
+        session.condition
+      );
       if (!turn1 || !turn2 || !turn3) {
         throw new Error("SAFER Intro Turn 1~3 생성 결과가 완전하지 않습니다.");
       }
-      const saferAgent = prompts.getSaferAgent(session.condition);
       const turn3Messages = [turn3];
       if (typeof saferAgent.buildTurn3ConsequenceMessages === "function") {
         const additions = saferAgent.buildTurn3ConsequenceMessages({
@@ -94,15 +146,25 @@ function registerSaferRoutes(app, dependencies) {
           participantContext: payload
         });
         if (Array.isArray(additions)) {
-          turn3Messages.push(...additions.map(value => String(value || "").trim()).filter(Boolean));
+          turn3Messages.push(...additions.map(value => sanitize(String(value || "").trim())).filter(Boolean));
         }
       } else if (typeof saferAgent.buildTurn3ConsequenceExtension === "function") {
         const extension = String(
           saferAgent.buildTurn3ConsequenceExtension({ safetyCase, participantContext: payload }) || ""
         ).trim();
-        if (extension) turn3Messages.push(extension);
+        if (extension) turn3Messages.push(sanitize(extension));
       }
-      const introScript = { turn1, turn2, turn3, turn3Messages };
+      const organizationalOutcomeMessages = buildStandardizedOrganizationalOutcomeMessages(
+        session.condition
+      );
+      const introScript = {
+        turn1,
+        turn2,
+        turn3,
+        turn3Messages,
+        organizationalOutcome: STANDARDIZED_ORGANIZATIONAL_OUTCOME,
+        organizationalOutcomeMessages
+      };
       const response = { ok: true, condition: session.condition, script: introScript };
       const completedRequest = await store.completeRequest(session.sessionId, {
         requestId,
@@ -210,4 +272,4 @@ function registerSaferRoutes(app, dependencies) {
   });
 }
 
-module.exports = { registerSaferRoutes };
+module.exports = { registerSaferRoutes, stripRepeatedCoworkerExperience };

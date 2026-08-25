@@ -65,6 +65,24 @@
         <button type="button" id="rule-select-button" disabled>선택 완료</button>
       </section>
 
+      <section
+        class="scenario-recall-card"
+        id="scenario-recall-card"
+        role="note"
+        aria-labelledby="scenario-recall-title"
+        hidden
+      >
+        <div class="scenario-recall-heading">
+          <span>SAFER</span>
+          <h2 id="scenario-recall-title">사고 상황 다시보기</h2>
+        </div>
+        <div class="scenario-recall-meta" aria-label="사고 상황 요약 정보">
+          <span><strong>작업</strong> <span id="scenario-recall-work"></span></span>
+          <span><strong>사고유형</strong> <span id="scenario-recall-risk"></span></span>
+        </div>
+        <p id="scenario-recall-summary"></p>
+      </section>
+
       <form class="chat-input-form" id="chat-form" hidden>
         <label class="sr-only" for="chat-input">답변 입력</label>
         <textarea
@@ -92,6 +110,7 @@
   </main>
 
   <script src="/safer/state.js" defer></script>
+  <script src="/safer/turn-timing.js" defer></script>
   <script src="/safer/view.js" defer></script>
   <script src="/safer/request-events.js" defer></script>
   <script src="/safer/rule-selection.js" defer></script>

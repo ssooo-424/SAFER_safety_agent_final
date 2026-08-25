@@ -49,30 +49,37 @@ function parseCredentials(value) {
   return credentials;
 }
 
-function loadSheetsExportConfig(env = process.env) {
-  const databaseUrl = String(env.DATABASE_URL || '').trim();
-  if (!databaseUrl) {
-    throw new SheetsExportConfigError('DATABASE_URL is required for Google Sheets export');
-  }
-  const sheetName = String(env.GOOGLE_SHEETS_TAB || DEFAULT_SHEET_NAME).trim();
+function loadSheetsTargetConfig(env = process.env) {
+  const baseSheetName = String(env.GOOGLE_SHEETS_TAB || DEFAULT_SHEET_NAME).trim();
+  const sheetName = String(
+    env.GOOGLE_SHEETS_ANALYSIS_TAB || `${baseSheetName}_ANALYSIS`
+  ).trim();
   if (!sheetName || sheetName.length > 100 || /[:\\/?*\[\]]/.test(sheetName)) {
-    throw new SheetsExportConfigError('GOOGLE_SHEETS_TAB is invalid');
+    throw new SheetsExportConfigError('Google Sheets analysis tab name is invalid');
   }
   const credentials = parseCredentials(env.GOOGLE_SERVICE_ACCOUNT_JSON);
   if (!credentials && !String(env.GOOGLE_APPLICATION_CREDENTIALS || '').trim()) {
     throw new SheetsExportConfigError('Google Service Account credentials are required');
   }
   return {
-    databaseUrl,
     spreadsheetId: resolveSpreadsheetId(env),
     sheetName,
     credentials,
   };
 }
 
+function loadSheetsExportConfig(env = process.env) {
+  const databaseUrl = String(env.DATABASE_URL || '').trim();
+  if (!databaseUrl) {
+    throw new SheetsExportConfigError('DATABASE_URL is required for Google Sheets export');
+  }
+  return { ...loadSheetsTargetConfig(env), databaseUrl };
+}
+
 module.exports = {
   DEFAULT_SHEET_NAME,
   SheetsExportConfigError,
   loadSheetsExportConfig,
+  loadSheetsTargetConfig,
   resolveSpreadsheetId,
 };

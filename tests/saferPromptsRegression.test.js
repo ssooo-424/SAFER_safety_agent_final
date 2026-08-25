@@ -2,6 +2,7 @@ const assert = require("node:assert/strict");
 const test = require("node:test");
 
 const saferPrompts = require("../llm/saferPrompts");
+const { stripRepeatedCoworkerExperience } = require("../runtime/saferRoutes");
 
 const safetyCase = {
   scenario: {
@@ -29,13 +30,11 @@ const safetyCase = {
 
 const participantContext = {
   profile: {
-    importantPerson: "배우자",
-    importantPersonDetail: "아이와 함께 기다리는 배우자"
+    importantPerson: "배우자"
   },
   incident: {
     triggers: ["시간 압박"],
     feeling: "빨리 끝내고 쉬고 싶어서",
-    consequence: "다쳐서 일을 못 할 수 있다"
   }
 };
 
@@ -96,4 +95,39 @@ for (const condition of ["educator", "coworker", "future_self"]) {
 
 test("unknown condition is rejected at the router boundary", () => {
   assert.throws(() => saferPrompts.getSaferAgent("unknown"));
+});
+
+test("coworker introduces the peer relationship before beginning the firsthand accident account", () => {
+  const greeting = saferPrompts.buildSaferTurn0Greeting({
+    condition: "coworker",
+    profile: { name: "김철수" },
+    safetyCase
+  });
+  const intro = saferPrompts.buildSaferIntroMessages({
+    condition: "coworker",
+    safetyCase,
+    participantContext
+  });
+
+  assert.match(greeting.assistant, /나는 너랑 같은 현장에서 근무하던 작업자야\./);
+  assert.match(greeting.assistant, /오늘 안전가시설 작업한다고 들었어\./);
+  assert.doesNotMatch(greeting.assistant, /실제로 사고가 났어|자세히 말해줄게/);
+  assert.match(intro[1].content, /나도 같은 종류의 작업을 하다가 실제로 사고를 겪었어\./);
+  assert.match(intro[1].content, /Turn 1-A에서 이미 별도로 제공/);
+  assert.match(intro[1].content, /생성하는 Turn 1-B에는 사용하지 마세요/);
+  assert.match(intro[1].content, /사고 원인은 무엇이었나요\?/);
+  assert.match(intro[1].content, /사고로 어떤 피해가 발생했나요\?/);
+});
+
+test("coworker Turn 1 removes the fixed peer-experience sentence if the LLM repeats it", () => {
+  const fixedExperience = "나도 같은 종류의 작업을 하다가 실제로 사고를 겪었어.";
+  const generated = [
+    "그날은 안전가시설 작업을 위해 비계를 설치하고 있었어.",
+    fixedExperience
+  ].join(" ");
+
+  assert.equal(
+    stripRepeatedCoworkerExperience(generated, fixedExperience),
+    "그날은 안전가시설 작업을 위해 비계를 설치하고 있었어."
+  );
 });

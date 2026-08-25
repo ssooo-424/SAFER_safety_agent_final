@@ -1,12 +1,13 @@
 const fs = require("fs");
 const path = require("path");
+const { normalizeTurnTimings } = require("./turnTiming");
 
 function writeJson(directory, filename, value) {
   fs.mkdirSync(directory, { recursive: true });
   fs.writeFileSync(path.join(directory, filename), JSON.stringify(value, null, 2), "utf-8");
 }
 
-function registerParticipantRoutes(app, { store, sessionRequests, dataRoot }) {
+function registerParticipantRoutes(app, { store, sessionRequests, googleSheetsSync, dataRoot }) {
   app.post("/api/submit", sessionRequests.enforceSubmitRateLimit, async (req, res) => {
     try {
       const { participantId: ignoredParticipantId, ...submittedPayload } = req.body || {};
@@ -37,6 +38,7 @@ function registerParticipantRoutes(app, { store, sessionRequests, dataRoot }) {
         secure: req.secure,
         path: "/"
       });
+      await googleSheetsSync?.syncSessionById(session.sessionId);
       return res.json({ ...record, savedAs: dataDir ? filename : null });
     } catch (error) {
       return sessionRequests.publicRequestError(req, res, error);
@@ -52,9 +54,13 @@ function registerParticipantRoutes(app, { store, sessionRequests, dataRoot }) {
       const preSurvey = session.data.preSurvey || {};
       const clientAnswers = Object.fromEntries(
         Object.entries(req.body || {}).filter(
-          ([key]) => !["sessionId", "participantId", "condition", "scenarioId", "scenarioRowId", "name", "org"].includes(key)
+          ([key]) => !["sessionId", "participantId", "condition", "scenarioId", "scenarioRowId", "name", "org", "turnTimings"].includes(key)
         )
       );
+      const turnTimings = {
+        ...(session.data.turnTimings || {}),
+        ...normalizeTurnTimings(req.body?.turnTimings)
+      };
       const authoritativePayload = {
         ...clientAnswers,
         participantId: session.participantId,
@@ -77,7 +83,7 @@ function registerParticipantRoutes(app, { store, sessionRequests, dataRoot }) {
         requestId,
         leaseGeneration: request.leaseGeneration,
         response,
-        sessionData: { postSurvey: authoritativePayload }
+        sessionData: { postSurvey: authoritativePayload, turnTimings }
       });
       if (surveyDir && completedRequest.leaseGeneration === request.leaseGeneration) {
         try {
@@ -88,6 +94,9 @@ function registerParticipantRoutes(app, { store, sessionRequests, dataRoot }) {
             error: sessionRequests.errorMetadata(error)
           });
         }
+      }
+      if (completedRequest.leaseGeneration === request.leaseGeneration) {
+        await googleSheetsSync?.syncSessionById(session.sessionId);
       }
       return res.json(completedRequest.response);
     } catch (error) {

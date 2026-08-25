@@ -149,6 +149,22 @@ test("mobile Turn 4 composer fully contains its two-line Korean placeholder", ()
   );
 });
 
+test("Turn 4 shows a participant-safe scenario reminder above the shared composer", () => {
+  const saferHtml = readPublicFile("safer.html");
+  const view = readPublicFile(path.join("safer", "view.js"));
+  const controlsCss = readPublicFile(path.join("safer-styles", "controls.css"));
+  const reminderPosition = saferHtml.indexOf('id="scenario-recall-card"');
+  const composerPosition = saferHtml.indexOf('id="chat-form"');
+
+  assert.notEqual(reminderPosition, -1, "the scenario reminder must exist");
+  assert.ok(reminderPosition < composerPosition, "the reminder must appear immediately above the composer");
+  assert.match(namedFunctionSource(view, "showAnswerInput"), /renderScenarioRecall\(\)[\s\S]*?scenarioRecallCard\.hidden\s*=\s*false/);
+  assert.match(namedFunctionSource(view, "clearControls"), /scenarioRecallCard\.hidden\s*=\s*true/);
+  assert.match(namedFunctionSource(view, "renderScenarioRecall"), /actualCase\.summary/);
+  assert.doesNotMatch(namedFunctionSource(view, "renderScenarioRecall"), /raw_text|sourceTextContent/);
+  assert.match(controlsCss, /\.scenario-recall-card\s*\{[^}]*background\s*:\s*rgba\([^)]*,\s*0\.9\)/is);
+});
+
 test("voice controls use solid high-contrast keyboard focus rings", () => {
   const saferCss = [
     "foundation.css",

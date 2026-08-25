@@ -4,12 +4,6 @@ window.PreSurveyForm = (() => {
     return Array.from(boxes).map((box) => box.value);
   }
 
-  function getPersonDetails() {
-    return Array.from(document.querySelectorAll(".person-detail"))
-      .map((input) => input.value.trim())
-      .filter((value) => value);
-  }
-
   function validateStep(step, selectedScenario) {
     if (step === 1) {
       if (!document.getElementById("name").value.trim()) return "이름을 입력해주세요.";
@@ -20,12 +14,12 @@ window.PreSurveyForm = (() => {
       if (!document.getElementById("profileCode").value) return "안전성향 유형 코드를 선택해주세요.";
     }
 
-    if (step === 3) {
+    if (step === 2) {
       if (getChecked("majorProcess").length === 0) return "대공정을 선택해주세요.";
       if (getChecked("detailProcess").length === 0) return "세부공정을 선택해주세요.";
     }
 
-    if (step === 4) {
+    if (step === 3) {
       if (!selectedScenario) return "위험 시나리오를 선택해주세요.";
       if (getChecked("feeling").length === 0) return "강행 이유를 선택해주세요.";
     }
@@ -47,7 +41,6 @@ window.PreSurveyForm = (() => {
         career: document.getElementById("career").value,
         profileCode: document.getElementById("profileCode").value,
         importantPerson: document.getElementById("importantPersonType").value,
-        importantPersonDetail: getPersonDetails().join(", "),
       },
       incident: {
         majorProcess: majorProcess[0] || "",
@@ -58,36 +51,13 @@ window.PreSurveyForm = (() => {
         riskType: selectedScenario?.primaryAccident || "",
         accidents: selectedScenario?.accidents || [],
         processContent: selectedScenario?.processContent || "",
-        consequence: document.getElementById("consequence").value,
         feeling: feeling[0] || "",
       },
       psychology: {
-        attitude: {
-          q13: document.getElementById("q13").value,
-          q14: document.getElementById("q14").value,
-          q15: document.getElementById("q15").value,
-        },
         lowReason: getChecked("lowReason"),
         extraComment: document.getElementById("extraComment").value,
       },
     };
-  }
-
-  function bindPeopleControls() {
-    const addPersonButton = document.getElementById("addPersonBtn");
-    const personList = document.getElementById("personList");
-    if (!addPersonButton) return;
-
-    addPersonButton.addEventListener("click", () => {
-      const entry = document.createElement("div");
-      entry.className = "person-entry";
-      entry.innerHTML = `
-        <input type="text" class="person-detail" placeholder="예: 이름, 나이 등" />
-        <button type="button" class="btn-del">삭제</button>
-      `;
-      entry.querySelector(".btn-del").addEventListener("click", () => entry.remove());
-      if (personList) personList.appendChild(entry);
-    });
   }
 
   function bindChipLimits() {
@@ -133,5 +103,5 @@ window.PreSurveyForm = (() => {
     });
   }
 
-  return { bindChipLimits, bindPeopleControls, bindProcessOptions, collectPayload, getChecked, validateStep };
+  return { bindChipLimits, bindProcessOptions, collectPayload, getChecked, validateStep };
 })();

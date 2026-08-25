@@ -27,6 +27,7 @@ const {
 } = require("./coworker/turn5Evaluation");
 const { buildTurn5Feedback } = require("./coworker/turn5Feedback");
 const { buildTurn6Feedback } = require("./coworker/turn6");
+const { buildTurn3ConsequenceMessages } = require("./coworker/consequence");
 
 function getTurn4Question() {
   return (
@@ -40,6 +41,7 @@ module.exports = {
   persona: coworkerPersona,
   buildTurn0Greeting,
   buildIntroMessages,
+  buildTurn3ConsequenceMessages,
   getTurn4Question,
   buildTurn5EvaluationMessages,
   buildTurn5Feedback,

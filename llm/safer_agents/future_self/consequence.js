@@ -13,6 +13,8 @@ const {
   buildFutureSelfParticipantContext
 } = require("./participantContext");
 
+const { getRelationshipNarrative } = require("../../relationshipNarratives");
+
 function buildTurn3ConsequenceMessages({
   participantContext = {},
   safetyCase = {}
@@ -25,26 +27,17 @@ function buildTurn3ConsequenceMessages({
 
   let relationshipMessage;
   let livelihoodMessage;
+  const relationshipNarrative = getRelationshipNarrative(context.importantPerson);
 
   if (context.fatalOutcome) {
-    relationshipMessage = [
-      `내가 돌아오지 못한 뒤 ${context.importantPerson}의 일상까지 무너졌어.`,
-      context.importantPersonDetail
-        ? `${context.importantPersonDetail}에게 마지막 인사도 못 하고 모든 부담을 남겨서 너무 미안해.`
-        : `${context.importantPerson}에게 마지막 인사도 못 하고 모든 부담을 남겨서 너무 미안해.`
-    ].join("\n");
+    relationshipMessage = relationshipNarrative.futureSelfFatal;
 
     livelihoodMessage = [
-      `내 수입이 끊기고 장례와 생계 부담은 ${context.importantPerson}에게 남았어.`,
+      "내 수입이 끊기고 장례와 생계 부담까지 감당할 수 없게 됐어.",
       "내가 쌓아온 경력과 앞으로 살아갈 기회도 그날 끝나버렸어."
     ].join("\n");
   } else {
-    relationshipMessage = [
-      `몸보다 더 괴로운 건 ${context.importantPerson}에게 짐이 된 거야.`,
-      context.importantPersonDetail
-        ? `${context.importantPersonDetail}에게 아픈 모습과 걱정만 남겨서 너무 미안해.`
-        : `${context.importantPerson}에게 아픈 모습과 걱정만 남겨서 너무 미안해.`
-    ].join("\n");
+    relationshipMessage = relationshipNarrative.futureSelf;
 
     livelihoodMessage = [
       "치료와 재활로 병원비는 쌓이고, 일을 못 해 생계가 막막해졌어.",

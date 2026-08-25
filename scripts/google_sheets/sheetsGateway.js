@@ -24,9 +24,26 @@ async function withRetry(operation, { sleep, random, maxAttempts = 5 }) {
   throw new Error('Google Sheets retry loop ended unexpectedly');
 }
 
-function sameHeader(actual) {
-  return actual.length === EXPORT_HEADERS.length
-    && actual.every((value, index) => value === EXPORT_HEADERS[index]);
+function sameHeader(actual, headers) {
+  return actual.length === headers.length
+    && actual.every((value, index) => value === headers[index]);
+}
+
+function isHeaderPrefix(actual, headers) {
+  return actual.length > 0
+    && actual.length < headers.length
+    && actual.every((value, index) => value === headers[index]);
+}
+
+function columnName(columnNumber) {
+  let value = columnNumber;
+  let name = '';
+  while (value > 0) {
+    value -= 1;
+    name = String.fromCharCode(65 + (value % 26)) + name;
+    value = Math.floor(value / 26);
+  }
+  return name;
 }
 
 function chunk(values, size) {
@@ -41,10 +58,12 @@ function createSheetsGateway({
   sheets,
   spreadsheetId,
   sheetName,
+  headers = EXPORT_HEADERS,
   sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
   random = Math.random,
 }) {
   const quotedName = quoteSheetName(sheetName);
+  const lastColumn = columnName(headers.length);
   const retryOptions = { sleep, random };
 
   async function tabExists() {
@@ -79,7 +98,7 @@ function createSheetsGateway({
     const response = await withRetry(
       () => sheets.spreadsheets.values.batchGet({
         spreadsheetId,
-        ranges: [`${quotedName}!A1:S1`, `${quotedName}!A2:S`],
+        ranges: [`${quotedName}!A1:${lastColumn}1`, `${quotedName}!A2:${lastColumn}`],
         majorDimension: 'ROWS',
       }),
       retryOptions,
@@ -90,13 +109,23 @@ function createSheetsGateway({
       await withRetry(
         () => sheets.spreadsheets.values.update({
           spreadsheetId,
-          range: `${quotedName}!A1:S1`,
+          range: `${quotedName}!A1:${lastColumn}1`,
           valueInputOption: 'RAW',
-          requestBody: { values: [EXPORT_HEADERS] },
+          requestBody: { values: [headers] },
         }),
         retryOptions,
       );
-    } else if (!sameHeader(header)) {
+    } else if (isHeaderPrefix(header, headers)) {
+      await withRetry(
+        () => sheets.spreadsheets.values.update({
+          spreadsheetId,
+          range: `${quotedName}!A1:${lastColumn}1`,
+          valueInputOption: 'RAW',
+          requestBody: { values: [headers] },
+        }),
+        retryOptions,
+      );
+    } else if (!sameHeader(header, headers)) {
       throw new Error(`Google Sheets header does not match exporter schema: ${sheetName}`);
     }
     const rows = rowRange.values || [];
@@ -138,7 +167,7 @@ function createSheetsGateway({
       if (existingRow) updated += 1;
       else inserted += 1;
       return {
-        range: `${quotedName}!A${targetRow}:S${targetRow}`,
+        range: `${quotedName}!A${targetRow}:${lastColumn}${targetRow}`,
         majorDimension: 'ROWS',
         values: [row],
       };
@@ -150,4 +179,4 @@ function createSheetsGateway({
   return { upsertRows };
 }
 
-module.exports = { createSheetsGateway, quoteSheetName, withRetry };
+module.exports = { columnName, createSheetsGateway, quoteSheetName, withRetry };

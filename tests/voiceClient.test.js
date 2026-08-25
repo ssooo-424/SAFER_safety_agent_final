@@ -39,14 +39,20 @@ class FakeRecognition {
   }
 }
 
-class FakeUtterance {
-  constructor(text) {
-    this.text = text;
-    this.lang = "";
-    this.rate = 0;
-    this.pitch = 0;
-    this.volume = 0;
-    this.voice = null;
+class FakeAudio {
+  static instances = [];
+
+  constructor(url) {
+    this.url = url;
+    this.paused = false;
+    this.preservesPitch = false;
+    FakeAudio.instances.push(this);
+  }
+
+  async play() {}
+
+  pause() {
+    this.paused = true;
   }
 }
 
@@ -113,21 +119,21 @@ test("dictation exposes browser errors and keeps unsupported browsers on the key
   assert.equal(unsupported.toggle("키보드 입력"), false);
 });
 
-test("speech output is user-triggered, Korean, stoppable, and exclusive to one message", () => {
+test("speech output requests OpenAI audio, is stoppable, and stays exclusive to one message", async () => {
   const { createSpeechController } = loadVoiceClient();
-  const spoken = [];
-  let cancelCount = 0;
-  const koreanVoice = { lang: "ko-KR", name: "Korean" };
-  const speechSynthesis = {
-    getVoices: () => [koreanVoice, { lang: "en-US", name: "English" }],
-    speak: (utterance) => spoken.push(utterance),
-    cancel: () => { cancelCount += 1; },
+  const requests = [];
+  const revoked = [];
+  const fetchImpl = async (url, options) => {
+    requests.push({ url, options });
+    return { ok: true, blob: async () => new Blob(["mp3"], { type: "audio/mpeg" }) };
   };
   const firstStates = [];
   const secondStates = [];
   const controller = createSpeechController({
-    speechSynthesis,
-    UtteranceConstructor: FakeUtterance,
+    fetchImpl,
+    AudioConstructor: FakeAudio,
+    createObjectURL: () => `blob:audio-${requests.length}`,
+    revokeObjectURL: value => revoked.push(value),
   });
 
   assert.equal(controller.supported, true);
@@ -135,34 +141,39 @@ test("speech output is user-triggered, Korean, stoppable, and exclusive to one m
     id: "message-1",
     text: "안전수칙을 확인하세요.",
     onStateChange: (state) => firstStates.push(state),
-  }), "speaking");
-  assert.equal(spoken.length, 1);
-  assert.equal(spoken[0].lang, "ko-KR");
-  assert.equal(spoken[0].voice, koreanVoice);
-  assert.equal(spoken[0].rate, 1);
-  assert.deepEqual(firstStates, ["speaking"]);
+  }), "loading");
+  assert.deepEqual(firstStates, ["loading"]);
+  await new Promise(setImmediate);
+  assert.equal(requests.length, 1);
+  assert.equal(requests[0].url, "/api/safer-tts");
+  assert.deepEqual(JSON.parse(requests[0].options.body), { text: "안전수칙을 확인하세요." });
+  assert.deepEqual(firstStates, ["loading", "speaking"]);
+  assert.equal(FakeAudio.instances[0].playbackRate, 1.2);
+  assert.equal(FakeAudio.instances[0].preservesPitch, true);
 
   assert.equal(controller.toggle({
     id: "message-2",
     text: "두 번째 안내입니다.",
     onStateChange: (state) => secondStates.push(state),
-  }), "speaking");
-  assert.equal(cancelCount, 1);
+  }), "loading");
   assert.equal(firstStates.at(-1), "idle");
-  assert.equal(spoken.length, 2);
+  await new Promise(setImmediate);
+  assert.equal(requests.length, 2);
+  assert.equal(FakeAudio.instances[0].paused, true);
 
   assert.equal(controller.toggle({
     id: "message-2",
     text: "두 번째 안내입니다.",
     onStateChange: (state) => secondStates.push(state),
   }), "stopped");
-  assert.equal(cancelCount, 2);
   assert.equal(secondStates.at(-1), "idle");
+  assert.ok(revoked.length >= 1);
 });
 
 test("SAFER chat wires optional dictation and assistant-only TTS without an audio upload path", () => {
   const html = fs.readFileSync(path.join(publicDirectory, "safer.html"), "utf8");
   const script = fs.readFileSync(path.join(publicDirectory, "safer.js"), "utf8");
+  const voiceClient = fs.readFileSync(voiceClientPath, "utf8");
 
   assert.match(
     html,
@@ -173,5 +184,6 @@ test("SAFER chat wires optional dictation and assistant-only TTS without an audi
   assert.match(script, /window\.SaferVoice/);
   assert.match(script, /const inputMethod\s*=\s*state\.inputMethod/);
   assert.match(script, /userMessage:\s*answer,[\s\S]*?inputMethod/);
-  assert.doesNotMatch(`${html}\n${script}`, /MediaRecorder|FormData|audio\/webm|\/api\/.*audio/i);
+  assert.match(voiceClient, /\/api\/safer-tts/);
+  assert.doesNotMatch(`${html}\n${script}`, /MediaRecorder|FormData|audio\/webm/i);
 });

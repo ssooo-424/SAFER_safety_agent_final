@@ -37,15 +37,15 @@ function buildTurn0Greeting({ profile = {}, safetyCase }) {
   const name = cleanText(profile?.name) || "작업자";
   const jobType = getPrimaryJobType(profile);
   const work = getTurn0WorkText(safetyCase);
+  const spokenWork = /작업$/.test(work) ? work : `${work} 작업`;
   const lines = [
     `안녕, ${name}.`,
     "",
-    `지금 ${jobType}으로 ${addObjectParticle(work)} 하고 있지?`,
+    "나는 너랑 같은 현장에서 근무하던 작업자야.",
     "",
-    "나는 너와 같은 현장에서 일하는 동료 작업자 AI야.",
-    "우리처럼 현장에서 직접 일하는 입장에서 이번 사고 사례를 같이 살펴보려고 해."
+    `오늘 ${spokenWork}한다고 들었어.`
   ];
-  return { assistant: lines.join("\n"), context: { name, jobType, work } };
+  return { assistant: lines.join("\n"), context: { name, jobType, work: spokenWork } };
 }
 
 module.exports = {
