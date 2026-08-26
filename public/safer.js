@@ -9,6 +9,7 @@ const speechController = window.SaferVoice.createSpeechController({
 let chatView;
 let conversation;
 let ruleSelection;
+let focusNextAssistantBubble = false;
 
 function syncTurnTimings() {
   void apiClient.postJson(
@@ -57,12 +58,63 @@ function scrollChatToBottom() {
   });
 }
 
+function dismissMobileKeyboard() {
+  dictationController.stop();
+  elements.chatInput.blur();
+  const activeElement = document.activeElement;
+  if (
+    activeElement &&
+    elements.chatForm.contains(activeElement) &&
+    typeof activeElement.blur === "function"
+  ) activeElement.blur();
+  navigator.virtualKeyboard?.hide?.();
+}
+
+function prepareForNextAssistantTurn() {
+  focusNextAssistantBubble = true;
+  dismissMobileKeyboard();
+}
+
+function cancelNextAssistantTurnFocus() {
+  focusNextAssistantBubble = false;
+}
+
+function scrollAssistantBubbleToTop(bubble) {
+  const alignBubble = () => {
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        const top = Math.max(0, bubble.offsetTop - 12);
+        if (typeof elements.chatBox.scrollTo === "function") {
+          elements.chatBox.scrollTo({ top, behavior: "smooth" });
+        } else {
+          elements.chatBox.scrollTop = top;
+        }
+      });
+    });
+  };
+  const viewport = window.visualViewport;
+  const handleViewportResize = () => alignBubble();
+  viewport?.addEventListener("resize", handleViewportResize);
+  window.setTimeout(() => {
+    viewport?.removeEventListener("resize", handleViewportResize);
+    alignBubble();
+  }, 450);
+  bubble.addEventListener("animationend", alignBubble, { once: true });
+  alignBubble();
+}
+
 function appendBubble(text, role, options = {}) {
   // 기존 실험 화면과 transcript를 보존하려고 `|||`도 한 bubble의 text로 그대로 렌더링한다.
   const bubble = chatView.createBubble(text, role, options);
   elements.chatBox.insertBefore(bubble, elements.typing);
-  bubble.addEventListener("animationend", scrollChatToBottom, { once: true });
-  scrollChatToBottom();
+  if (role === "assistant" && focusNextAssistantBubble) {
+    focusNextAssistantBubble = false;
+    scrollAssistantBubbleToTop(bubble);
+  } else {
+    bubble.addEventListener("animationend", scrollChatToBottom, { once: true });
+    scrollChatToBottom();
+  }
+  return bubble;
 }
 
 function getAssistantTypingDelay(text, messageIndex) {
@@ -126,6 +178,7 @@ function showQuickReply({ label, userText = "", onSelect }) {
     const timingStage = turnTiming.currentStage();
     completeTurnTiming("quick_reply");
     clearNotice();
+    prepareForNextAssistantTurn();
     if (userText) appendBubble(userText, "user");
     clearControls();
     try {
@@ -228,6 +281,7 @@ async function submitPreventionAnswer() {
     elements.chatInput.focus();
     return;
   }
+  prepareForNextAssistantTurn();
   completeTurnTiming(inputMethod === "dictation" ? "dictation_submit" : "keyboard_submit");
   clearNotice();
   clearControls();
@@ -243,6 +297,7 @@ async function submitPreventionAnswer() {
     state.currentTurn = 5;
     conversation.showNavigationForCurrentTurn();
   } catch (error) {
+    cancelNextAssistantTurnFocus();
     showNotice(error.message);
     showAnswerInput();
     state.inputMethod = inputMethod;

@@ -137,6 +137,28 @@ test("new chat content scrolls after controls change and after its enter animati
   );
 });
 
+test("mobile turn transitions dismiss the keyboard and align the first assistant bubble", () => {
+  const safer = readPublicFile("safer.js");
+  const dismissKeyboard = namedFunctionSource(safer, "dismissMobileKeyboard");
+  const prepareTurn = namedFunctionSource(safer, "prepareForNextAssistantTurn");
+  const alignAssistant = namedFunctionSource(safer, "scrollAssistantBubbleToTop");
+  const appendBubble = namedFunctionSource(safer, "appendBubble");
+  const submitAnswer = namedFunctionSource(safer, "submitPreventionAnswer");
+
+  assert.match(dismissKeyboard, /chatInput\.blur\(\)/);
+  assert.match(dismissKeyboard, /document\.activeElement/);
+  assert.match(dismissKeyboard, /virtualKeyboard\?\.hide\?\.\(\)/);
+  assert.match(prepareTurn, /focusNextAssistantBubble\s*=\s*true/);
+  assert.match(prepareTurn, /dismissMobileKeyboard\(\)/);
+  assert.match(alignAssistant, /window\.visualViewport/);
+  assert.match(alignAssistant, /bubble\.offsetTop/);
+  assert.match(alignAssistant, /chatBox\.scrollTo\(\{\s*top,\s*behavior:\s*"smooth"\s*\}\)/);
+  assert.match(appendBubble, /role\s*===\s*"assistant"\s*&&\s*focusNextAssistantBubble/);
+  assert.match(appendBubble, /scrollAssistantBubbleToTop\(bubble\)/);
+  assert.match(submitAnswer, /prepareForNextAssistantTurn\(\)[\s\S]*?postJson\("\/api\/safer-chat"/);
+  assert.match(submitAnswer, /catch\s*\(error\)\s*\{[\s\S]*?cancelNextAssistantTurnFocus\(\)/);
+});
+
 test("mobile Turn 4 composer fully contains its two-line Korean placeholder", () => {
   const foundationCss = readPublicFile(path.join("safer-styles", "foundation.css"));
   const saferCss = readPublicFile(path.join("safer-styles", "responsive.css"));
