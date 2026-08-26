@@ -6,9 +6,6 @@
   };
 
   const elements = {
-    contextWork: document.getElementById("context-work"),
-    contextRisk: document.getElementById("context-risk"),
-    contextTrigger: document.getElementById("context-trigger"),
     agentAvatar: document.getElementById("agent-avatar"),
     agentName: document.getElementById("agent-name"),
     chatBox: document.getElementById("chat-box"),

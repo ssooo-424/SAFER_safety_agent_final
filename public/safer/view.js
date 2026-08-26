@@ -133,20 +133,6 @@
       label.textContent = listening ? "인식 중" : "음성입력";
     }
 
-    function renderContext(actualCase) {
-      const scenario = state.safetyCase?.scenario || {};
-      elements.contextWork.textContent = displayRawValue(
-        actualCase.work || scenario.process_content ||
-        scenario.detail_process || scenario.major_process
-      );
-      elements.contextRisk.textContent = displayRawValue(
-        actualCase.riskType || scenario.risk_type
-      );
-      elements.contextTrigger.textContent = displayRawValue(
-        actualCase.trigger || scenario.triggers
-      );
-    }
-
     function renderAgentHeader(conditionMeta) {
       const meta = conditionMeta[state.condition];
       elements.agentAvatar.textContent = meta.avatar;
@@ -158,7 +144,6 @@
       clearNotice,
       createBubble,
       renderAgentHeader,
-      renderContext,
       renderDictationState,
       resizeChatInput,
       setBusy,

@@ -33,7 +33,6 @@ test("active Korean-language surfaces preserve words while retaining safe wrappi
   const scenarioReview = readPublicFile("scenario-review.css");
   const saferCss = [
     "foundation.css",
-    "context-panel.css",
     "conversation.css",
   ].map((fileName) => readPublicFile(path.join("safer-styles", fileName))).join("\n");
 
@@ -42,7 +41,7 @@ test("active Korean-language surfaces preserve words while retaining safe wrappi
     assert.match(source, /overflow-wrap\s*:\s*break-word/i, `${name} must safely wrap long unbroken values`);
   }
 
-  for (const selector of [".context-facts dd", ".bubble"]) {
+  for (const selector of [".bubble"]) {
     const rule = saferCss.match(new RegExp(`${selector.replace(".", "\\.")}\\s*\\{[^}]*\\}`, "s"));
     assert.ok(rule, `${selector} must have a dedicated wrapping rule`);
     assert.doesNotMatch(rule[0], /overflow-wrap\s*:\s*anywhere/i, `${selector} must not split Korean words anywhere`);
@@ -104,16 +103,11 @@ test("mobile pre-survey profile fields use one readable column", () => {
   assert.match(mobileRule[0], /\.row\s*\{[^}]*grid-template-columns\s*:\s*1fr/i);
 });
 
-test("mobile chat keeps work context compact and uses concise rule-selection copy", () => {
+test("chat starts with the agent header and uses concise rule-selection copy", () => {
   const saferHtml = readPublicFile("safer.html");
-  const contextCss = readPublicFile(path.join("safer-styles", "context-panel.css"));
-  const responsiveCss = readPublicFile(path.join("safer-styles", "responsive.css"));
 
-  const groupedFacts = saferHtml.match(/<div class="context-fact-group">[\s\S]*?id="context-work"[\s\S]*?id="context-risk"[\s\S]*?<\/div>\s*<\/div>/);
-  assert.ok(groupedFacts, "work and accident type must share the first context box");
-  assert.match(saferHtml, /class="context-fact-item context-fact-cause"[\s\S]*?id="context-trigger"/);
-  assert.match(contextCss, /\.context-facts\s*\{[^}]*grid-template-columns\s*:\s*minmax\(0,\s*0\.85fr\)\s+minmax\(0,\s*1\.15fr\)/i);
-  assert.match(responsiveCss, /\.context-fact-group\s*\{[^}]*grid-template-columns\s*:\s*1fr/i);
+  assert.doesNotMatch(saferHtml, /class="context-panel"|선택한 작업 정보|id="context-work"|id="context-risk"|id="context-trigger"/);
+  assert.match(saferHtml, /<main class="chat-app">\s*<section class="chat-shell"/);
   assert.match(saferHtml, /<h2>지킬 수 있는 안전수칙<\/h2>/);
   assert.match(saferHtml, /<p>현장에서 실천할 수 있는 안전수칙 하나를 선택해 주세요\.<\/p>/);
   assert.doesNotMatch(saferHtml, /세 가지 중 현장에서 가장 자신 있게 실천할 수 있는/);

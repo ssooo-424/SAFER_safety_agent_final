@@ -315,12 +315,6 @@ async function startConversation() {
   state.currentTurn = 0;
   state.introScript = null;
   state.organizationalOutcomeShown = false;
-  const actualCase = state.safetyCase?.actual_case || {};
-  chatView.renderContext({
-    work: actualCase.process_content,
-    riskType: actualCase.risk_type,
-    trigger: actualCase.trigger
-  });
   chatView.renderAgentHeader(CONDITION_META);
   appendBubble(result.turn0.assistant, "assistant");
   conversation.showNavigationForCurrentTurn();

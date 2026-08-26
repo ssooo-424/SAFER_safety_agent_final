@@ -1,6 +1,5 @@
 /* 원본 cascade 순서를 유지합니다. */
 @import url("/safer-styles/foundation.css");
-@import url("/safer-styles/context-panel.css");
 @import url("/safer-styles/chat-shell.css");
 @import url("/safer-styles/conversation.css");
 @import url("/safer-styles/controls.css");
