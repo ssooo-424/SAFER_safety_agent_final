@@ -17,15 +17,17 @@
       </div>
 
       <dl class="context-facts">
-        <div>
-          <dt>작업</dt>
-          <dd id="context-work">-</dd>
+        <div class="context-fact-group">
+          <div class="context-fact-item">
+            <dt>작업</dt>
+            <dd id="context-work">-</dd>
+          </div>
+          <div class="context-fact-item">
+            <dt>사고유형</dt>
+            <dd id="context-risk">-</dd>
+          </div>
         </div>
-        <div>
-          <dt>사고유형</dt>
-          <dd id="context-risk">-</dd>
-        </div>
-        <div>
+        <div class="context-fact-item context-fact-cause">
           <dt>주요원인</dt>
           <dd id="context-trigger">-</dd>
         </div>
@@ -59,8 +61,8 @@
       </section>
 
       <section class="rule-select-panel" id="rule-select-panel" hidden>
-        <h2>가장 자신 있게 지킬 수 있는 안전수칙</h2>
-        <p>세 가지 중 현장에서 가장 자신 있게 실천할 수 있는 안전수칙 하나를 선택해 주세요.</p>
+        <h2>지킬 수 있는 안전수칙</h2>
+        <p>현장에서 실천할 수 있는 안전수칙 하나를 선택해 주세요.</p>
         <div id="rule-select-list"></div>
         <button type="button" id="rule-select-button" disabled>선택 완료</button>
       </section>

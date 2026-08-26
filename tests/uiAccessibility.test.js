@@ -104,6 +104,21 @@ test("mobile pre-survey profile fields use one readable column", () => {
   assert.match(mobileRule[0], /\.row\s*\{[^}]*grid-template-columns\s*:\s*1fr/i);
 });
 
+test("mobile chat keeps work context compact and uses concise rule-selection copy", () => {
+  const saferHtml = readPublicFile("safer.html");
+  const contextCss = readPublicFile(path.join("safer-styles", "context-panel.css"));
+  const responsiveCss = readPublicFile(path.join("safer-styles", "responsive.css"));
+
+  const groupedFacts = saferHtml.match(/<div class="context-fact-group">[\s\S]*?id="context-work"[\s\S]*?id="context-risk"[\s\S]*?<\/div>\s*<\/div>/);
+  assert.ok(groupedFacts, "work and accident type must share the first context box");
+  assert.match(saferHtml, /class="context-fact-item context-fact-cause"[\s\S]*?id="context-trigger"/);
+  assert.match(contextCss, /\.context-facts\s*\{[^}]*grid-template-columns\s*:\s*minmax\(0,\s*0\.85fr\)\s+minmax\(0,\s*1\.15fr\)/i);
+  assert.match(responsiveCss, /\.context-fact-group\s*\{[^}]*grid-template-columns\s*:\s*1fr/i);
+  assert.match(saferHtml, /<h2>지킬 수 있는 안전수칙<\/h2>/);
+  assert.match(saferHtml, /<p>현장에서 실천할 수 있는 안전수칙 하나를 선택해 주세요\.<\/p>/);
+  assert.doesNotMatch(saferHtml, /세 가지 중 현장에서 가장 자신 있게 실천할 수 있는/);
+});
+
 test("seven-point scales protect the 375px layout without reducing touch targets", () => {
   const postSurvey = readPublicFile("post-survey.css");
   const postSurveyScript = readPublicFile("post-survey.js");

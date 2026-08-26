@@ -37,16 +37,35 @@
     gap: var(--space-6);
   }
 
-  .context-facts div {
-    padding: var(--space-8) var(--space-9);
+  .context-facts > div {
+    padding: var(--space-7) var(--space-8);
+  }
+
+  .context-fact-group {
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+  }
+
+  .context-fact-group .context-fact-item {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    align-items: baseline;
+    gap: var(--space-6);
+  }
+
+  .context-fact-group .context-fact-item + .context-fact-item {
+    border-left: 0;
+    padding-left: 0;
   }
 
   .context-facts dt {
+    margin-bottom: var(--space-3);
     font-size: var(--text-context-mobile);
   }
 
   .context-facts dd {
     font-size: var(--text-status);
+    line-height: 1.35;
   }
 
   .chat-header {
