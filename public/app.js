@@ -39,13 +39,14 @@ function setStep(step) {
 
   showError("");
   window.scrollTo(0, 0);
-  if (step === 3) window.PreSurveyScenarios.loadScenarios();
+  if (step === 4) window.PreSurveyScenarios.loadScenarios();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
   setStep(1);
   form.bindChipLimits();
   form.bindProcessOptions();
+  form.bindRiskSliders();
 
   if (prevBtn) {
     prevBtn.addEventListener("click", () => {

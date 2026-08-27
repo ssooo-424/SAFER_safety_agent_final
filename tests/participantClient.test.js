@@ -125,8 +125,7 @@ test("Given the participant pages, when their request contracts are inspected, t
   assert.match(safer, /postJson\(\s*"\/api\/safer-start",\s*\{\}\s*\)/);
   assert.match(safer, /postJson\(\s*"\/api\/safer-intro",\s*\{\}\s*\)/);
   assert.match(safer, /inputMethod/);
-  assert.match(safer, /actualCase\.risk_type/);
-  assert.match(safer, /actualCase\.trigger/);
+  assert.doesNotMatch(saferHtml, /선택한 작업 정보|id="context-work"|id="context-risk"|id="context-trigger"/);
   assert.doesNotMatch(safer, /safetyCase:\s*state\.safetyCase|payload:\s*state\.payload|scenarioId:\s*state\.scenarioId/);
   assert.match(postSurvey, /<script src="\/api-client\.js"><\/script>/);
   assert.match(postSurvey, /<script src="\/post-survey\.js"><\/script>/);

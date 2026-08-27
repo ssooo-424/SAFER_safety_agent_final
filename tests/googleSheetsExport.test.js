@@ -103,6 +103,25 @@ test('completed session maps to one stable research row without the session bear
   assert.equal(JSON.parse(row[EXPORT_HEADERS.indexOf('post_survey_json')]).q1, 5);
 });
 
+test('pre-survey risk perception is appended to the final Google Sheets columns', () => {
+  const row = buildExportRow({
+    participantId: 'participant-risk',
+    condition: 'educator',
+    assignmentMode: 'balanced',
+    phase: 'created',
+    createdAt: '2026-08-28T01:00:00.000Z',
+    data: {
+      preSurvey: {
+        psychology: { riskPerception: { R1: 70, R2: 60, R3: 20 } },
+      },
+    },
+  });
+
+  assert.deepEqual(EXPORT_HEADERS.slice(-3), ['pre_R1', 'pre_R2', 'pre_R3']);
+  assert.deepEqual(row.slice(-3), [70, 60, 20]);
+  assert.equal(row.length, EXPORT_HEADERS.length);
+});
+
 test('Sheets gateway updates known participants and assigns new participants deterministic rows', async () => {
   const writes = [];
   const sheets = {

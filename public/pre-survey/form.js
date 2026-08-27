@@ -15,11 +15,17 @@ window.PreSurveyForm = (() => {
     }
 
     if (step === 2) {
+      const untouchedSlider = Array.from(document.querySelectorAll(".risk-slider"))
+        .find((slider) => slider.dataset.touched !== "true");
+      if (untouchedSlider) return "사고 위험지각 세 문항의 응답 바를 모두 한 번씩 움직여주세요.";
+    }
+
+    if (step === 3) {
       if (getChecked("majorProcess").length === 0) return "대공정을 선택해주세요.";
       if (getChecked("detailProcess").length === 0) return "세부공정을 선택해주세요.";
     }
 
-    if (step === 3) {
+    if (step === 4) {
       if (!selectedScenario) return "위험 시나리오를 선택해주세요.";
       if (getChecked("feeling").length === 0) return "강행 이유를 선택해주세요.";
     }
@@ -56,6 +62,11 @@ window.PreSurveyForm = (() => {
       psychology: {
         lowReason: getChecked("lowReason"),
         extraComment: document.getElementById("extraComment").value,
+        riskPerception: {
+          R1: Number(document.getElementById("preRiskR1").value),
+          R2: Number(document.getElementById("preRiskR2").value),
+          R3: Number(document.getElementById("preRiskR3").value),
+        },
       },
     };
   }
@@ -103,5 +114,17 @@ window.PreSurveyForm = (() => {
     });
   }
 
-  return { bindChipLimits, bindProcessOptions, collectPayload, getChecked, validateStep };
+  function bindRiskSliders() {
+    document.querySelectorAll(".risk-slider").forEach((slider) => {
+      const output = document.getElementById(`${slider.id}Value`);
+      const update = () => {
+        slider.dataset.touched = "true";
+        if (output) output.value = slider.value;
+      };
+      slider.addEventListener("input", update);
+      slider.addEventListener("change", update);
+    });
+  }
+
+  return { bindChipLimits, bindProcessOptions, bindRiskSliders, collectPayload, getChecked, validateStep };
 })();

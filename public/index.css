@@ -73,7 +73,9 @@ body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; marg
 .space-top-lg { margin-top: var(--index-space-20); }
 .section-divider { margin: var(--index-space-20) 0; border: 0; border-top: 1px solid var(--index-line-soft); }
 .risk-help { color: var(--index-muted); font-size: var(--index-text-body); margin: calc(var(--index-space-10) * -1) 0 var(--index-space-24); }
-.risk-value { color: var(--index-accent); font-weight: 700; }
+.risk-question { position: relative; }
+.risk-question label { padding-right: 56px; line-height: 1.55; }
+.risk-value { position: absolute; top: var(--index-space-16); right: var(--index-space-20); min-width: 44px; border-radius: var(--index-radius-pill); padding: var(--index-space-4) var(--index-space-10); color: var(--index-surface); background: var(--index-accent); font-weight: 700; text-align: center; }
 .slider-ends { display: flex; justify-content: space-between; font-size: var(--index-text-xs); color: var(--index-muted-faint); margin-top: var(--index-space-5); }
 .label-note { color: var(--index-muted-faint); font-weight: 400; }
 .scenario-choice-note { color: var(--index-muted); font-weight: 400; }

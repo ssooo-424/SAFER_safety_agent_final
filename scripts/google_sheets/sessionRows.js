@@ -77,6 +77,9 @@ const EXPORT_HEADERS = [
   'chat_total_elapsed_sec',
   'chat_hidden_sec',
   'turn_timings_json',
+  'pre_R1',
+  'pre_R2',
+  'pre_R3',
 ];
 
 function stableValue(value) {
@@ -216,6 +219,9 @@ function buildExportRow(session) {
     hasTiming ? secondsCell(sumTiming('totalMs')) : '',
     hasTiming ? secondsCell(sumTiming('hiddenMs')) : '',
     jsonCell(hasTiming ? timings : null),
+    psychology.riskPerception?.R1 ?? '',
+    psychology.riskPerception?.R2 ?? '',
+    psychology.riskPerception?.R3 ?? '',
   ];
   assertCellSizes(row, session.participantId);
   return row;

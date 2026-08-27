@@ -13,7 +13,7 @@
       <h1>사전설문</h1>
     </div>
     
-    <div class="progress" id="progressPill">Step 1 / 4</div>
+    <div class="progress" id="progressPill">Step 1 / 5</div>
     <div class="error" id="stepError"></div>
 
     <form id="surveyForm" onsubmit="return false;">
@@ -85,6 +85,7 @@
               <option value="DA">DA — 광역경계형</option>
               <option value="IC">IC — 신중행동형</option>
               <option value="IR">IR — 유연행동형</option>
+              <option value="없음">없음 — 검사 결과 없음</option>
             </select>
             <div class="muted">사전 인지 평가에서 받은 본인의 유형 코드를 선택해주세요.</div>
           </div>
@@ -109,7 +110,33 @@
       </div>
 
       <div class="step" data-step="2">
-        <h3>2) 작업 정보</h3>
+        <h3>2) 사고 위험지각 (100점)</h3>
+        <p class="risk-help">각 문항의 응답 바를 한 번씩 움직여 주세요.</p>
+
+        <div class="card risk-question">
+          <label for="preRiskR1">R1. 산업현장에서 발생하는 사고의 피해는 대체로 매우 심각하다고 생각하십니까?</label>
+          <output class="risk-value" id="preRiskR1Value" for="preRiskR1">50</output>
+          <input class="slider risk-slider" type="range" id="preRiskR1" min="0" max="100" value="50" data-touched="false" />
+          <div class="slider-ends"><span>전혀 0</span><span>매우 강하게 100</span></div>
+        </div>
+
+        <div class="card risk-question">
+          <label for="preRiskR2">R2. 나 또한 산업현장에서 사고를 겪을 가능성이 실제로 있다고 생각하십니까?</label>
+          <output class="risk-value" id="preRiskR2Value" for="preRiskR2">50</output>
+          <input class="slider risk-slider" type="range" id="preRiskR2" min="0" max="100" value="50" data-touched="false" />
+          <div class="slider-ends"><span>전혀 0</span><span>매우 강하게 100</span></div>
+        </div>
+
+        <div class="card risk-question">
+          <label for="preRiskR3">R3. 본인이 현재 수행하는 업무 자체가 위험성이 크다고 느끼십니까?</label>
+          <output class="risk-value" id="preRiskR3Value" for="preRiskR3">50</output>
+          <input class="slider risk-slider" type="range" id="preRiskR3" min="0" max="100" value="50" data-touched="false" />
+          <div class="slider-ends"><span>전혀 0</span><span>매우 강하게 100</span></div>
+        </div>
+      </div>
+
+      <div class="step" data-step="3">
+        <h3>3) 작업 정보</h3>
         <div class="card">
           <label>어떤 대공정이었나요? <span class="required">*</span></label>
           <div class="chips" data-max="1" data-group="majorProcess" id="majorProcessChips">
@@ -144,8 +171,8 @@
         </div>
       </div>
 
-      <div class="step" data-step="3">
-        <h3>3) 위험 시나리오</h3>
+      <div class="step" data-step="4">
+        <h3>4) 위험 시나리오</h3>
         
         <div class="card">
           <label>아래는 선택하신 공정에서 발생할 수 있는 위험 시나리오입니다.<br>
@@ -175,8 +202,8 @@
         </div>
       </div>
 
-      <div class="step" data-step="4">
-        <h3>4) 위험 인식 저해 요인</h3>
+      <div class="step" data-step="5">
+        <h3>5) 위험 인식 저해 요인</h3>
         <div class="card">
           <label>산업현장에서 사고가 많이 발생하는 주요 원인이 무엇이라고 생각하시나요? (2개)</label>
           <div class="chips" data-max="2" data-group="lowReason">
