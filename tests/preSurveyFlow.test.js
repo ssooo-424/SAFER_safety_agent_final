@@ -12,9 +12,9 @@ test("pre-survey requires all three risk-perception sliders before continuing", 
   const app = fs.readFileSync(path.join(rootDir, "public", "app.js"), "utf8");
 
   assert.match(html, /사고 위험지각 \(100점\)/);
-  assert.match(html, /id="preRiskR1"[^>]*data-touched="false"/);
-  assert.match(html, /id="preRiskR2"[^>]*data-touched="false"/);
-  assert.match(html, /id="preRiskR3"[^>]*data-touched="false"/);
+  assert.match(html, /id="preRiskR1"[^>]*step="10"[^>]*data-touched="false"/);
+  assert.match(html, /id="preRiskR2"[^>]*step="10"[^>]*data-touched="false"/);
+  assert.match(html, /id="preRiskR3"[^>]*step="10"[^>]*data-touched="false"/);
   assert.match(html, /<option value="없음">없음 — 검사 결과 없음<\/option>/);
   assert.match(form, /slider\.dataset\.touched !== "true"/);
   assert.match(form, /사고 위험지각 세 문항의 응답 바를 모두 한 번씩 움직여주세요/);
