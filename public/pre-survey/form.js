@@ -11,6 +11,7 @@ window.PreSurveyForm = (() => {
       if (getChecked("jobType").length === 0) return "직종을 선택해주세요.";
       if (!document.getElementById("position").value.trim()) return "직급을 입력해주세요.";
       if (!document.getElementById("career").value) return "경력을 선택해주세요.";
+      if (!document.getElementById("ageGroup").value) return "연령대를 선택해주세요.";
       if (!document.getElementById("profileCode").value) return "안전성향 유형 코드를 선택해주세요.";
     }
 
@@ -45,6 +46,7 @@ window.PreSurveyForm = (() => {
         jobType: getChecked("jobType"),
         position: document.getElementById("position").value,
         career: document.getElementById("career").value,
+        ageGroup: document.getElementById("ageGroup").value,
         profileCode: document.getElementById("profileCode").value,
         importantPerson: document.getElementById("importantPersonType").value,
       },

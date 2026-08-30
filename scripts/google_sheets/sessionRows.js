@@ -80,6 +80,7 @@ const EXPORT_HEADERS = [
   'pre_R1',
   'pre_R2',
   'pre_R3',
+  'age_group',
 ];
 
 function stableValue(value) {
@@ -222,6 +223,7 @@ function buildExportRow(session) {
     psychology.riskPerception?.R1 ?? '',
     psychology.riskPerception?.R2 ?? '',
     psychology.riskPerception?.R3 ?? '',
+    profile.ageGroup || '',
   ];
   assertCellSizes(row, session.participantId);
   return row;
