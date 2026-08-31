@@ -68,6 +68,9 @@ body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; marg
 .intro-card p { margin: 0 0 var(--index-space-12); }
 .intro-signoff { text-align: right; font-size: var(--index-text-body); color: var(--index-muted-dark); }
 .intro-signoff p { margin: 0; }
+.step-guidance { margin: 0 0 var(--index-space-20); border-left: 4px solid var(--index-accent); padding: var(--index-space-10) var(--index-space-14); color: var(--index-muted-dark); background: var(--index-surface-soft); line-height: 1.55; }
+.step-guidance p { margin: 0; }
+.step-guidance p + p { margin-top: var(--index-space-6); }
 .space-top-sm { margin-top: var(--index-space-12); }
 .space-top-md { margin-top: var(--index-space-16); }
 .space-top-lg { margin-top: var(--index-space-20); }

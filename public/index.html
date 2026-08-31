@@ -136,8 +136,12 @@
 
       <div class="step" data-step="3">
         <h3>3) 작업 정보</h3>
+        <div class="step-guidance">
+          <p>현재 현장에서 수행하고 계신 작업에 대한 정보를 선택해 주세요.</p>
+          <p>해당하는 작업이 없다면, 본인의 작업과 가장 비슷하거나 위험하다고 생각했던 작업을 선택해 주세요.</p>
+        </div>
         <div class="card">
-          <label>어떤 대공정이었나요? <span class="required">*</span></label>
+          <label>현재 수행하고 계신 작업의 대공정을 선택해 주세요. <span class="required">*</span></label>
           <div class="chips" data-max="1" data-group="majorProcess" id="majorProcessChips">
             <label class="chip"><input type="checkbox" value="가설공사" />가설공사</label>
             <label class="chip"><input type="checkbox" value="토공사" />토공사</label>
@@ -152,12 +156,12 @@
           </div>
 
           <div id="detailProcessWrap" class="detail-wrap hidden">
-            <label>세부공정은 무엇이었나요?</label>
+            <label>세부공정을 선택해 주세요.</label>
             <div class="chips" data-max="1" data-group="detailProcess" id="detailProcessChips">
             </div>
           </div>
 
-          <label class="space-top-lg">주요 원인 (트리거) <span class="label-note">— 최대 3개</span></label>
+          <label class="space-top-lg">현장에서 사고가 발생하는 주요 원인이 무엇이라고 생각하시는지 선택해 주세요. <span class="label-note">— 최대 3개</span></label>
           <div class="chips" data-max="3" data-group="triggers">
             <label class="chip"><input type="checkbox" value="일정/생산 압박 (빨리빨리)" />일정 압박</label>
             <label class="chip"><input type="checkbox" value="반복 작업이라 익숙해서" />익숙함(방심)</label>

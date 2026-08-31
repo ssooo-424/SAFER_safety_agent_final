@@ -25,6 +25,9 @@ test("pre-survey requires all three risk-perception sliders before continuing", 
   assert.match(form, /slider\.dataset\.touched !== "true"/);
   assert.match(form, /사고 위험지각 세 문항의 응답 바를 모두 한 번씩 움직여주세요/);
   assert.match(form, /riskPerception:\s*\{[\s\S]*?R1:[\s\S]*?R2:[\s\S]*?R3:/);
+  assert.match(html, /현재 현장에서 수행하고 계신 작업에 대한 정보를 선택해 주세요\./);
+  assert.match(html, /해당하는 작업이 없다면, 본인의 작업과 가장 비슷하거나 위험하다고 생각했던 작업을 선택해 주세요\./);
+  assert.match(html, /현장에서 사고가 발생하는 주요 원인이 무엇이라고 생각하시는지 선택해 주세요\./);
   assert.match(html, /Step 1 \/ 5/);
   assert.match(state, /totalSteps:\s*5/);
   assert.match(app, /step === 4[^\n]*loadScenarios/);
