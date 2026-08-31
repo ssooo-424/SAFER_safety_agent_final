@@ -28,6 +28,9 @@ test("pre-survey requires all three risk-perception sliders before continuing", 
   assert.match(html, /현재 현장에서 수행하고 계신 작업에 대한 정보를 선택해 주세요\./);
   assert.match(html, /해당하는 작업이 없다면, 본인의 작업과 가장 비슷하거나 위험하다고 생각했던 작업을 선택해 주세요\./);
   assert.match(html, /현장에서 사고가 발생하는 주요 원인이 무엇이라고 생각하시는지 선택해 주세요\./);
+  assert.doesNotMatch(html, /data-group="lowReason"|산업현장에서 사고가 많이 발생하는 주요 원인이 무엇이라고 생각하시나요\? \(2개\)/);
+  assert.doesNotMatch(form, /lowReason:\s*getChecked\("lowReason"\)/);
+  assert.match(html, /왜 이러한 저해 요인이 발생한다고 생각하시나요\? \(선택\)[\s\S]*?id="extraComment"/);
   assert.match(html, /Step 1 \/ 5/);
   assert.match(state, /totalSteps:\s*5/);
   assert.match(app, /step === 4[^\n]*loadScenarios/);

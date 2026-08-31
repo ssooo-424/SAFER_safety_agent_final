@@ -60,7 +60,6 @@ window.PreSurveyForm = (() => {
         feeling: feeling[0] || "",
       },
       psychology: {
-        lowReason: getChecked("lowReason"),
         extraComment: document.getElementById("extraComment").value,
         riskPerception: {
           R1: Number(document.getElementById("preRiskR1").value),
