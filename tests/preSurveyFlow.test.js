@@ -15,7 +15,8 @@ test("pre-survey requires all three risk-perception sliders before continuing", 
   assert.match(html, /id="preRiskR1"[^>]*step="10"[^>]*data-touched="false"/);
   assert.match(html, /id="preRiskR2"[^>]*step="10"[^>]*data-touched="false"/);
   assert.match(html, /id="preRiskR3"[^>]*step="10"[^>]*data-touched="false"/);
-  assert.match(html, /<option value="없음">없음 — 검사 결과 없음<\/option>/);
+  assert.doesNotMatch(html, /안전성향 유형 코드|id="profileCode"|검사 결과 없음/);
+  assert.doesNotMatch(form, /profileCode|안전성향 유형 코드를 선택해주세요/);
   for (const ageGroup of ["20대", "30대", "40대", "50대", "60대"]) {
     assert.match(html, new RegExp(`<option value="${ageGroup}">${ageGroup}<\\/option>`));
   }

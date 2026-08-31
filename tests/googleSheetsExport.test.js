@@ -97,6 +97,8 @@ test('completed session maps to one stable research row without the session bear
   assert.equal(row[4], 42);
   assert.equal(row[EXPORT_HEADERS.indexOf('name')], '익명1');
   assert.equal(row[EXPORT_HEADERS.indexOf('org')], '현장A');
+  assert.equal(EXPORT_HEADERS.includes('profile_code'), true);
+  assert.equal(row[EXPORT_HEADERS.indexOf('profile_code')], '');
   assert.equal(row[EXPORT_HEADERS.indexOf('turn5_input_method')], 'dictation');
   assert.equal(row[EXPORT_HEADERS.indexOf('turn5_user_message')], '=말한 내용');
   assert.equal(row.includes('must-not-be-exported'), false);

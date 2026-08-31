@@ -31,10 +31,9 @@ window.PreSurveyScenarios = (() => {
     const form = window.PreSurveyForm;
     const major = form.getChecked("majorProcess")[0] || "";
     const detail = form.getChecked("detailProcess")[0] || "";
-    const profileCode = document.getElementById("profileCode").value || "";
     const loadingElement = document.getElementById("scenarioLoading");
     const gridElement = document.getElementById("scenarioGrid");
-    const cacheKey = `${major}|${detail}|${profileCode}`;
+    const cacheKey = `${major}|${detail}`;
     const cachedScenarios = window.PreSurveyState.getCachedScenarios(cacheKey);
 
     if (cachedScenarios) {
@@ -43,9 +42,7 @@ window.PreSurveyScenarios = (() => {
     }
 
     loadingElement.hidden = false;
-    loadingElement.textContent = profileCode
-      ? "⏳ 당신의 안전성향에 맞는 시나리오를 생성하는 중... (잠시만요)"
-      : "⏳ 공정에 맞는 시나리오를 불러오는 중...";
+    loadingElement.textContent = "⏳ 공정에 맞는 시나리오를 불러오는 중...";
     gridElement.hidden = true;
     gridElement.innerHTML = "";
     window.PreSurveyState.clearSelectedScenario();
@@ -58,7 +55,6 @@ window.PreSurveyScenarios = (() => {
 
     try {
       const params = new URLSearchParams({ major, detail });
-      if (profileCode) params.set("profileCode", profileCode);
       const response = await fetch(`/api/scenarios?${params}`);
       const data = await response.json();
       if (!data.ok || !data.scenarios || data.scenarios.length === 0) {
