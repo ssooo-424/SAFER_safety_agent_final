@@ -31,7 +31,14 @@ test("pre-survey requires all three risk-perception sliders before continuing", 
   assert.doesNotMatch(html, /data-group="lowReason"|산업현장에서 사고가 많이 발생하는 주요 원인이 무엇이라고 생각하시나요\? \(2개\)/);
   assert.doesNotMatch(form, /lowReason:\s*getChecked\("lowReason"\)/);
   assert.match(html, /왜 이러한 저해 요인이 발생한다고 생각하시나요\? \(선택\)[\s\S]*?id="extraComment"/);
+  const workStep = html.match(/<div class="step" data-step="3">[\s\S]*?<div class="step" data-step="4">/)[0];
+  const causeStep = html.match(/<div class="step" data-step="4">[\s\S]*?<div class="step" data-step="5">/)[0];
+  const scenarioStep = html.match(/<div class="step" data-step="5">[\s\S]*?<div class="btns">/)[0];
+  assert.doesNotMatch(workStep, /data-group="triggers"|id="extraComment"/);
+  assert.match(causeStep, /data-group="triggers"[\s\S]*?id="extraComment"/);
+  assert.match(scenarioStep, /id="scenarioContainer"[\s\S]*?data-group="feeling"/);
   assert.match(html, /Step 1 \/ 5/);
   assert.match(state, /totalSteps:\s*5/);
-  assert.match(app, /step === 4[^\n]*loadScenarios/);
+  assert.match(app, /step === 5[^\n]*loadScenarios/);
+  assert.match(form, /if \(step === 5\)[\s\S]*?위험 시나리오를 선택해주세요/);
 });

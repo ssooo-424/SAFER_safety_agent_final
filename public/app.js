@@ -39,7 +39,7 @@ function setStep(step) {
 
   showError("");
   window.scrollTo(0, 0);
-  if (step === 4) window.PreSurveyScenarios.loadScenarios();
+  if (step === 5) window.PreSurveyScenarios.loadScenarios();
 }
 
 document.addEventListener("DOMContentLoaded", () => {

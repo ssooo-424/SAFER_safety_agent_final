@@ -25,7 +25,7 @@ window.PreSurveyForm = (() => {
       if (getChecked("detailProcess").length === 0) return "세부공정을 선택해주세요.";
     }
 
-    if (step === 4) {
+    if (step === 5) {
       if (!selectedScenario) return "위험 시나리오를 선택해주세요.";
       if (getChecked("feeling").length === 0) return "강행 이유를 선택해주세요.";
     }

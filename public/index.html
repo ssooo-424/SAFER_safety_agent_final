@@ -160,8 +160,13 @@
             <div class="chips" data-max="1" data-group="detailProcess" id="detailProcessChips">
             </div>
           </div>
+        </div>
+      </div>
 
-          <label class="space-top-lg">현장에서 사고가 발생하는 주요 원인이 무엇이라고 생각하시는지 선택해 주세요. <span class="label-note">— 최대 3개</span></label>
+      <div class="step" data-step="4">
+        <h3>4) 사고 원인과 위험 인식 저해 요인</h3>
+        <div class="card">
+          <label>현장에서 사고가 발생하는 주요 원인이 무엇이라고 생각하시는지 선택해 주세요. <span class="label-note">— 최대 3개</span></label>
           <div class="chips" data-max="3" data-group="triggers">
             <label class="chip"><input type="checkbox" value="일정/생산 압박 (빨리빨리)" />일정 압박</label>
             <label class="chip"><input type="checkbox" value="반복 작업이라 익숙해서" />익숙함(방심)</label>
@@ -171,11 +176,14 @@
             <label class="chip"><input type="checkbox" value="위험이 눈에 잘 안 보여서" />위험 인지 불가</label>
             <label class="chip"><input type="checkbox" value="피로/집중력 저하" />피로/집중 저하</label>
           </div>
+
+          <label class="space-top-lg">왜 이러한 저해 요인이 발생한다고 생각하시나요? (선택)</label>
+          <textarea id="extraComment" placeholder="자유롭게 적어주세요."></textarea>
         </div>
       </div>
 
-      <div class="step" data-step="4">
-        <h3>4) 위험 시나리오</h3>
+      <div class="step" data-step="5">
+        <h3>5) 위험 시나리오</h3>
         
         <div class="card">
           <label>아래는 선택하신 공정에서 발생할 수 있는 위험 시나리오입니다.<br>
@@ -202,14 +210,6 @@
               <label class="chip"><input type="checkbox" value="빨리해야한다는 일정 압박 때문에" />빨리해야한다는 일정 압박 때문에</label>
             </div>
           </div>
-        </div>
-      </div>
-
-      <div class="step" data-step="5">
-        <h3>5) 위험 인식 저해 요인</h3>
-        <div class="card">
-          <label>왜 이러한 저해 요인이 발생한다고 생각하시나요? (선택)</label>
-          <textarea id="extraComment" placeholder="자유롭게 적어주세요."></textarea>
         </div>
       </div>
 
